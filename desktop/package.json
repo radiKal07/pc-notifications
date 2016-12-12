@@ -1,0 +1,26 @@
+{
+  "name": "pc-notifications",
+  "version": "1.0.0",
+  "description": "PC Notifications Desktop App",
+  "main": "main.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tudor07/pc-notifications.git"
+  },
+  "keywords": [
+    "pc",
+    "notifications"
+  ],
+  "author": "Tudor Prodan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tudor07/pc-notifications/issues"
+  },
+  "homepage": "https://github.com/tudor07/pc-notifications#readme",
+  "dependencies": {
+    "electron-notifications": "^0.1.2"
+  }
+}
