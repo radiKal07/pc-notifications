@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/tudor07/pc-notifications#readme",
   "dependencies": {
+    "babel-plugin-transform-async-to-generator": "^6.16.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
+    "babel-register": "^6.18.0",
     "electron-notifications": "^0.1.2"
   }
 }

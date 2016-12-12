@@ -12,12 +12,12 @@ function createWindow () {
     toaster.init(win);
 
     win.loadURL(url.format({
-        pathname: path.join(__dirname, '/app/index.html'),
+        pathname: path.join(__dirname, '../app/index.html'),
         protocol: 'file:',
         slashes: true
     }))
 
-    //win.webContents.openDevTools()
+    win.webContents.openDevTools()
     
     win.on('closed', () => {
         win = null
