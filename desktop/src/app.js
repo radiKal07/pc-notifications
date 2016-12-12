@@ -8,7 +8,7 @@ var toaster = new Toaster();
 let win
 
 function createWindow () {
-    win = new BrowserWindow({width: 800, height: 600})
+    win = new BrowserWindow({width: 1280, height: 720})
     toaster.init(win);
 
     win.loadURL(url.format({

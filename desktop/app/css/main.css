@@ -6,21 +6,24 @@ body {
     height: 100vh;    
 }
 
-.sidebar {
-    background-color: grey;
+.static {
+    background-color: #565857;
     width: 70px;
     float: left;
-    position: fixed;
+}
+
+.dinamic {
+    margin-left: 70px;
 }
 
 .menu {
-    background-color: darkgray;
+    background-color: #734B5E;
     width: 35%;
     float: left;
 }
 
 .content {
-    background-color: darkolivegreen;
+    background-color: #BCBDC0;
     width: 65%;
-    float: left;
+    float: right;
 }
