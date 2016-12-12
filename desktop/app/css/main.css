@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+}
+
+.fullheight {
+    height: 100vh;    
+}
+
+.sidebar {
+    background-color: grey;
+    width: 70px;
+    float: left;
+    position: fixed;
+}
+
+.menu {
+    background-color: darkgray;
+    width: 35%;
+    float: left;
+}
+
+.content {
+    background-color: darkolivegreen;
+    width: 65%;
+    float: left;
+}
