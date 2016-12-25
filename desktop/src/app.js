@@ -2,22 +2,18 @@ import {app, BrowserWindow} from 'electron';
 import path from 'path';
 import url from 'url';
 
-var Toaster = require('electron-toaster');
-var toaster = new Toaster();
-
 let win
 
 function createWindow () {
     win = new BrowserWindow({width: 1280, height: 720})
-    toaster.init(win);
 
     win.loadURL(url.format({
-        pathname: path.join(__dirname, '../app/index.html'),
+        pathname: path.join(__dirname, '../ui/index.html'),
         protocol: 'file:',
         slashes: true
     }))
 
-    //win.webContents.openDevTools()
+    win.webContents.openDevTools()
     
     win.on('closed', () => {
         win = null

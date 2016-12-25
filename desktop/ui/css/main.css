@@ -7,7 +7,7 @@ body {
 }
 
 .static {
-    background-color: #565857;
+    background-color: #00796B;
     width: 70px;
     float: left;
 }
@@ -17,13 +17,13 @@ body {
 }
 
 .menu {
-    background-color: #734B5E;
+    background-color: #009688;
     width: 35%;
     float: left;
 }
 
 .content {
-    background-color: #BCBDC0;
+    background-color: #B2DFDB;
     width: 65%;
     float: right;
 }

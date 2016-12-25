@@ -1,3 +1,4 @@
 desktop/node_modules
 desktop/npm-debug.log
-
+desktop/build/
+mobile/.idea/
