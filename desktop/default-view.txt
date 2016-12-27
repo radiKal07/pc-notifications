@@ -1,0 +1,9 @@
+<div style={{...appStyleSheet.staticFixed, ...appStyleSheet.fullheight}}>
+    sidebar
+</div>
+<div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
+    <div style={{...appStyleSheet.menu, ...appStyleSheet.fullheight}}>menu</div>
+    <div style={{...appStyleSheet.content, ...appStyleSheet.fullheight}}>
+        <p style={appStyleSheet.centerMsg}>Please pair device</p>
+    </div>
+</div>

@@ -2,6 +2,7 @@ package com.radikal.pcnotifications.service.network
 
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
+import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.socket.client.Ack
@@ -23,7 +24,7 @@ class NetworkDiscovery @Inject constructor() {
     @Inject
     lateinit var wifiManager: WifiManager
 
-    fun getServerIp(callback: (String) -> Unit) {
+    fun getServerIp(port: Int, callback: (String) -> Unit) {
         val wifiInterface: NetworkInterface = getWiFiNetworkInterface()
         // due to Android bug (netmask is always zero) we have to find this value manually
         val netmask = getNetmask(wifiInterface)
@@ -31,6 +32,7 @@ class NetworkDiscovery @Inject constructor() {
 
         val sockets: MutableList<Socket> = ArrayList()
         var stop = false
+        var failedAttempts = 0
 
         Observable.just(allAddresses)
                 .observeOn(Schedulers.io())
@@ -43,12 +45,21 @@ class NetworkDiscovery @Inject constructor() {
                     !stop
                 }.map {
                     val current = it
-                    val socket = IO.socket("http://$it:3000").connect()
+                    val socket = IO.socket("http://$it:$port")
+                    socket.on("connect_error") {
+                        failedAttempts++
+                        if (failedAttempts == allAddresses.size) {
+                            callback("-1")
+                        }
+                        socket.close()
+                        socket.disconnect()
+                    }
+                    socket.connect()
                     socket.emit("trying", "knock knock", Ack {
                         if (socket.connected()) {
                             callback(current)
                             stop = true
-                            sockets.forEach { it.disconnect() }
+                            sockets.forEach { it.close(); it.disconnect() }
                         }
                     })
                     return@map socket

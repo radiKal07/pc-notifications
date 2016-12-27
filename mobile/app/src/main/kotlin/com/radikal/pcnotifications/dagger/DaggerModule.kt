@@ -3,8 +3,12 @@ package com.radikal.pcnotifications.dagger
 import android.app.Application
 import android.content.Context
 import android.net.wifi.WifiManager
+import com.radikal.pcnotifications.fragments.PairingFragment
+import com.radikal.pcnotifications.validators.Validator
+import com.radikal.pcnotifications.validators.impl.PortValidator
 import dagger.Module
 import dagger.Provides
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -25,4 +29,15 @@ class DaggerModule(val application: Application) {
         return application.getSystemService(Context.WIFI_SERVICE) as WifiManager
     }
 
+    @Provides
+    @Singleton
+    @Named("portValidator")
+    fun portValidator(): PortValidator {
+        return PortValidator()
+    }
+
+    @Provides
+    fun pairingFragment(): PairingFragment {
+        return PairingFragment()
+    }
 }

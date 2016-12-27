@@ -1,29 +1,4 @@
 body {
     margin: 0;
-}
-
-.fullheight {
-    height: 100vh;    
-}
-
-.static {
-    background-color: #00796B;
-    width: 70px;
-    float: left;
-}
-
-.dinamic {
-    margin-left: 70px;
-}
-
-.menu {
-    background-color: #009688;
-    width: 35%;
-    float: left;
-}
-
-.content {
-    background-color: #B2DFDB;
-    width: 65%;
-    float: right;
+    font-family: 'Roboto';
 }

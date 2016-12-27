@@ -13,5 +13,13 @@
     <RelativeLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/pair_try_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/try_again"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
 </RelativeLayout>

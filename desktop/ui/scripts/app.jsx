@@ -1,24 +1,37 @@
-import React from 'react';
+import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import injectTapEventPlugin from 'react-tap-event-plugin';
-import {App} from './layout/App.js';
+import {Router} from './layout/Router.jsx';
 
 injectTapEventPlugin();
 
-const MainApp = () => (
-  <MuiThemeProvider muiTheme={muiTheme}>
-    <App />
-  </MuiThemeProvider>
-);
+class MainApp extends Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+                <div>
+                    <MuiThemeProvider muiTheme={muiTheme}>
+                        <Router />
+                    </MuiThemeProvider>
+                </div>
+            );
+    }
+}
 
 ReactDOM.render(
   <MainApp />,
   document.getElementById('mainApp')
 );
 
+/**
+ * theme not working - TODO fix it
+ */
 const muiTheme = getMuiTheme({
   palette: {
     primary1Color: '#00796B',
@@ -34,6 +47,6 @@ const muiTheme = getMuiTheme({
     disabledColor: '#212121',
     pickerHeaderColor: '#FF5722',
     clockCircleColor: '#212121',
-    shadowColor: '#212121',
+    shadowColor: '#212121'
   }
 });

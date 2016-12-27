@@ -1,24 +1,27 @@
-import {app, BrowserWindow} from 'electron';
+import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import url from 'url';
+import { startServer } from './server.js';
 
 let win
 
-function createWindow () {
-    win = new BrowserWindow({width: 1280, height: 720})
+function createWindow() {
+        win = new BrowserWindow({ width: 1280, height: 720 })
 
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, '../ui/index.html'),
-        protocol: 'file:',
-        slashes: true
-    }))
+        win.loadURL(url.format({
+            pathname: path.join(__dirname, '../ui/index.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
 
-    win.webContents.openDevTools()
-    
-    win.on('closed', () => {
-        win = null
-    })
-}
+        win.webContents.openDevTools()
+
+        win.on('closed', () => {
+            win = null
+        })
+
+        startServer(win);
+    }
 
 app.on('ready', createWindow)
 

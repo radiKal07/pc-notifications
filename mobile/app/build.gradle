@@ -50,6 +50,7 @@ dependencies {
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.0.3'
     compile group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.0.1'
     compile group: 'io.reactivex', name: 'rxkotlin', version: '0.60.0'
+    compile 'com.android.support:design:25.1.0'
 }
 
 repositories {
