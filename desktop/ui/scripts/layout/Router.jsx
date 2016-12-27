@@ -4,14 +4,16 @@ import { PairingView } from './PairingView.jsx';
 import { HomeView } from './HomeView.jsx';
 import { SmsView } from './SmsView.jsx';
 import { SettingsView } from './SettingsView.jsx';
+import { layouts } from './Sidebar.jsx';
 
 export class Router extends Component {
     constructor(props) {
         super(props);
-        this.state = { layout: layouts.PAIRING, paired: false, snackbarOpen: false, snackbarMsg: ''};
+        this.state = { layout: layouts.HOME, paired: false, snackbarOpen: false, snackbarMsg: ''};
     }
 
     componentWillMount() {
+        this.onSwitchLayout = this.onSwitchLayout.bind(this);
     }
 
     render() {
@@ -30,19 +32,19 @@ export class Router extends Component {
                 {
                     this.state.layout == layouts.HOME
                     &&
-                    <HomeView/>
+                    <HomeView onSwitchLayout={this.onSwitchLayout}/>
                 }
 
                 {
                     this.state.layout == layouts.SMS
                     &&
-                    <SmsView/>
+                    <SmsView onSwitchLayout={this.onSwitchLayout}/>
                 }
 
                 {
                     this.state.layout == layouts.SETTINGS
                     &&
-                    <SettingsView/>
+                    <SettingsView onSwitchLayout={this.onSwitchLayout}/>
                 }
                 <Snackbar
                     open={this.state.snackbarOpen}
@@ -56,11 +58,8 @@ export class Router extends Component {
             </div>
         );
     }
-}
 
-const layouts = {
-    PAIRING: 'PAIRING',
-    HOME: 'HOME',
-    SMS: 'SMS',
-    SETTINGS: 'SETTINGS'
-}; 
+    onSwitchLayout(newLayout) {
+        this.setState({...this.state, layout: newLayout});
+    }
+}

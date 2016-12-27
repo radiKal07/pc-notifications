@@ -35,7 +35,6 @@ export const appStyleSheet = {
         top: '50%',
         transform: 'translateY(-50%)',
         display: 'flex',
-        top: '50%',
         justifyContent: 'center'
     }
 }
