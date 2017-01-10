@@ -43,6 +43,7 @@ class PairingFragment : Fragment() {
         builder.setView(view)
                 .setTitle("Pairing")
                 .setMessage("Please input pairing code")
+                .setCancelable(false)
                 .setPositiveButton("OK") {
                     dialog, which ->
                     run {

@@ -15,6 +15,7 @@ export class HomeView extends Component {
                 </div>
                 <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.fullContent, ...appStyleSheet.fullheight}}>
+                        <p style={appStyleSheet.centerMsg}><i className="material-icons md-48">insert_emoticon</i></p>
                         <p style={appStyleSheet.centerMsg}>Connected</p>
                     </div>
                 </div>

@@ -3,6 +3,8 @@ package com.radikal.pcnotifications.activities
 import android.app.Fragment
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import android.view.DragEvent
 import android.view.View
 import com.radikal.pcnotifications.MainApplication
 import com.radikal.pcnotifications.R
@@ -11,6 +13,10 @@ import com.radikal.pcnotifications.service.network.NetworkDiscovery
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_main.fragment_container as fragmentContainer
 import kotlinx.android.synthetic.main.activity_main.pair_try_again as pairTryAgainBtn
+import android.view.MenuItem
+import android.view.MotionEvent
+import com.mxn.soul.flowingdrawer_core.FlowingDrawer
+import kotlinx.android.synthetic.main.activity_main.drawerlayout as drawerLayout
 
 
 class MainActivity() : AppCompatActivity(), PairingFragment.OnFragmentInteractionListener {
@@ -26,11 +32,26 @@ class MainActivity() : AppCompatActivity(), PairingFragment.OnFragmentInteractio
         setContentView(R.layout.activity_main)
         (application as MainApplication).appComponent.inject(this)
 
+        supportActionBar!!.setDisplayShowTitleEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu_white_36dp)
+
         addPairingFragment()
         pairTryAgainBtn.setOnClickListener {
             pairTryAgainBtn.visibility = View.GONE
             addPairingFragment()
         }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            android.R.id.home ->  {
+                if (drawerLayout.drawerState == FlowingDrawer.STATE_OPEN) drawerLayout.closeMenu() else drawerLayout.openMenu()
+                return true
+            }
+
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onFindServerSucceeded(serverIp: String) {

@@ -9,7 +9,7 @@ import { layouts } from './Sidebar.jsx';
 export class Router extends Component {
     constructor(props) {
         super(props);
-        this.state = { layout: layouts.HOME, paired: false, snackbarOpen: false, snackbarMsg: ''};
+        this.state = { layout: layouts.PAIRING, paired: false, snackbarOpen: false, snackbarMsg: ''};
     }
 
     componentWillMount() {

@@ -16,9 +16,9 @@ export class SmsView extends Component {
                 </div>
                 <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.menu, ...appStyleSheet.fullheight}}>
-                        <SmsMenuItem icon="message" name="John Smith" content="hello this is test message"/>
-                        <SmsMenuItem icon="message" name="John Smith" content="hello this is test message"/>
-                        <SmsMenuItem icon="message" name="John Smith" content="hello this is test message"/>
+                        <SmsMenuItem icon="message" senderName="John Smith" message="hello this is test message"/>
+                        <SmsMenuItem icon="message" senderName="John Smith" message="hello this is test message"/>
+                        <SmsMenuItem icon="message" senderName="John Smith" message="hello this is test message"/>
                     </div>
                     <div style={{...appStyleSheet.content, ...appStyleSheet.fullheight}}>
                         <p style={appStyleSheet.centerMsg}>sms view</p>

@@ -9,13 +9,13 @@ export class SmsMenuItem extends Component {
         return(
             <div style={style.item}>
                 <div style={style.icon}>
-                    <i style="material-icons">{this.props.icon}</i>
+                    <i className="material-icons md-48">{this.props.icon}</i>
                 </div>
-                <div style={style.name}>
-                    {this.props.name}
+                <div style={style.senderName}>
+                    {this.props.senderName}
                 </div>
-                <div style={style.content}>
-                    {this.props.content}
+                <div style={style.message}>
+                    {this.props.message}
                 </div>
             </div>
         );
@@ -30,10 +30,10 @@ const style = {
         float: 'left',
         fontSize: '300%' // replace with icon size
     },
-    name: {
+    senderName: {
         marginLeft: '20%'
     },
-    content: {
+    message: {
         marginLeft: '20%'
     }
 }
