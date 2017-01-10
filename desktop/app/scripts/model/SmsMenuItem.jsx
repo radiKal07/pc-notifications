@@ -9,7 +9,7 @@ export class SmsMenuItem extends Component {
         return(
             <div style={style.item}>
                 <div style={style.icon}>
-                    {this.props.icon}
+                    <i style="material-icons">{this.props.icon}</i>
                 </div>
                 <div style={style.name}>
                     {this.props.name}
