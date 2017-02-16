@@ -14,12 +14,16 @@ import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_main.fragment_container as fragmentContainer
 import kotlinx.android.synthetic.main.activity_main.pair_try_again as pairTryAgainBtn
 import android.view.MenuItem
-import android.view.MotionEvent
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import com.mxn.soul.flowingdrawer_core.ElasticDrawer
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer
+import kotlinx.android.synthetic.main.activity_main.my_toolbar as toolbar
 import kotlinx.android.synthetic.main.activity_main.drawerlayout as drawerLayout
+import kotlinx.android.synthetic.main.activity_main.container_menu as containerMenu
 
 
-class MainActivity() : AppCompatActivity(), PairingFragment.OnFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), PairingFragment.OnFragmentInteractionListener {
     val TAG = "MainActivity"
 
     @Inject
@@ -31,6 +35,7 @@ class MainActivity() : AppCompatActivity(), PairingFragment.OnFragmentInteractio
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         (application as MainApplication).appComponent.inject(this)
+        setSupportActionBar(toolbar)
 
         supportActionBar!!.setDisplayShowTitleEnabled(true)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)

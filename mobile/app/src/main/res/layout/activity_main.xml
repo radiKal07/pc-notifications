@@ -4,17 +4,26 @@
     android:id="@+id/drawerlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipChildren="false"
+    android:clipChildren="true"
     android:clipToPadding="false"
     app:edPosition="1"
     app:edMenuSize="260dp"
-    app:edMenuBackground="#dddddd">
+    app:edMenuBackground="#FFFFFF">
 
     <!--content-->
     <RelativeLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
 
         <RelativeLayout
             android:id="@+id/fragment_container"
@@ -38,11 +47,20 @@
         android:layout_height="match_parent">
 
         <RelativeLayout
-            android:id="@+id/id_container_menu"
+            android:id="@+id/container_menu"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <RelativeLayout
+                android:id="@+id/test"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@color/colorPrimary">
+
+            </RelativeLayout>
+
             <TextView
+                android:layout_below="@id/test"
                 android:id="@+id/home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
