@@ -9,7 +9,7 @@ kapt {
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.radikal.pcnotifications"
         minSdkVersion 21
@@ -41,8 +41,9 @@ dependencies {
     }
     compile group: 'com.google.dagger', name: 'dagger', version: '2.8'
     compile 'com.google.dagger:dagger:2.8'
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:support-v4:25.1.1'
+    compile 'com.android.support:design:25.1.1'
     kapt 'com.google.dagger:dagger-compiler:2.8'
     provided 'org.glassfish:javax.annotation:10.0-b28'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
@@ -50,7 +51,6 @@ dependencies {
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.0.3'
     compile group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.0.1'
     compile group: 'io.reactivex', name: 'rxkotlin', version: '0.60.0'
-    compile 'com.android.support:design:25.1.0'
     compile 'com.mxn.soul:flowingdrawer-core:2.0.0'
     compile 'com.nineoldandroids:library:2.4.0'
 }

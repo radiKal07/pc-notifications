@@ -1,14 +1,13 @@
-<com.mxn.soul.flowingdrawer_core.FlowingDrawer
+<com.mxn.soul.flowingdrawer_core.FlowingDrawer xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/drawerlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="true"
     android:clipToPadding="false"
-    app:edPosition="1"
+    app:edMenuBackground="#FFFFFF"
     app:edMenuSize="260dp"
-    app:edMenuBackground="#FFFFFF">
+    app:edPosition="1">
 
     <!--content-->
     <RelativeLayout
@@ -23,56 +22,45 @@
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"/>
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
 
         <RelativeLayout
-            android:id="@+id/fragment_container"
+            android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_below="@+id/my_toolbar">
 
-        <Button
-            android:id="@+id/pair_try_again"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/try_again"
-            android:layout_centerHorizontal="true"
-            android:visibility="gone"/>
+            <ProgressBar
+                android:id="@+id/find_server_progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/find_server_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/find_server_progress_bar"
+                android:layout_centerHorizontal="true"
+                android:text="@string/finding_server"
+                android:visibility="gone" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/add_device_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_add_white_18dp"
+                app:useCompatPadding="true" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
     <!--menu-->
-    <com.mxn.soul.flowingdrawer_core.FlowingMenuLayout
-        android:id="@+id/menulayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <RelativeLayout
-            android:id="@+id/container_menu"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <RelativeLayout
-                android:id="@+id/test"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@color/colorPrimary">
-
-            </RelativeLayout>
-
-            <TextView
-                android:layout_below="@id/test"
-                android:id="@+id/home"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="HOME"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SETTINGS"
-                android:layout_below="@id/home"/>
-        </RelativeLayout>
-
-    </com.mxn.soul.flowingdrawer_core.FlowingMenuLayout>
+    <include layout="@layout/menu" />
 
 </com.mxn.soul.flowingdrawer_core.FlowingDrawer>

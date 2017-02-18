@@ -1,6 +1,6 @@
-package com.radikal.pcnotifications.validators.impl
+package com.radikal.pcnotifications.model.validators.impl
 
-import com.radikal.pcnotifications.validators.Validator
+import com.radikal.pcnotifications.model.validators.Validator
 import org.apache.commons.lang3.StringUtils
 import javax.inject.Inject
 

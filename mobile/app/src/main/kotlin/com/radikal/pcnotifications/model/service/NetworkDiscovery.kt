@@ -1,71 +1,61 @@
-package com.radikal.pcnotifications.service.network
+package com.radikal.pcnotifications.model.service
 
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
-import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.socket.client.Ack
 import io.socket.client.IO
-import io.socket.client.Socket
 import org.apache.commons.net.util.SubnetUtils
 import java.net.NetworkInterface
 import java.net.SocketException
-import java.util.*
 import javax.inject.Inject
 
 
 /**
  * Created by tudor on 14.12.2016.
  */
-class NetworkDiscovery @Inject constructor() {
-    private val TAG = "NetworkDiscovery"
+class NetworkDiscovery @Inject constructor(var wifiManager: WifiManager) {
 
-    @Inject
-    lateinit var wifiManager: WifiManager
+    fun getServerIp(port: Int, onSuccess: (String) -> Unit, onError: (Exception) -> Unit) {
+        if (!wifiManager.isWifiEnabled) {
+            onError(IllegalStateException("Please enable Wi-Fi"))
+        }
 
-    fun getServerIp(port: Int, callback: (String) -> Unit) {
         val wifiInterface: NetworkInterface = getWiFiNetworkInterface()
         // due to Android bug (netmask is always zero) we have to find this value manually
         val netmask = getNetmask(wifiInterface)
         val allAddresses = getAddressesInRange(wifiManager.dhcpInfo.gateway, netmask)
 
-        val sockets: MutableList<Socket> = ArrayList()
-        var stop = false
         var failedAttempts = 0
+        var serverFound = false
+        var index = 0
 
-        Observable.just(allAddresses)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .flatMapIterable {
-                    allAddresses.indices
-                }.flatMap {
-                    Observable.just(allAddresses[it])
-                }.takeWhile {
-                    !stop
-                }.map {
-                    val current = it
-                    val socket = IO.socket("http://$it:$port")
-                    socket.on("connect_error") {
-                        failedAttempts++
-                        if (failedAttempts == allAddresses.size) {
-                            callback("-1")
+        while (index < allAddresses.size && !serverFound) {
+            val address = allAddresses[index++]
+            Observable.just(address)
+                    .observeOn(Schedulers.io())
+                    .subscribeOn(Schedulers.io())
+                    .subscribe {
+                        val socket = IO.socket("http://$address:$port")
+                        socket.on("connect_error") {
+                            socket.close()
+                            socket.disconnect()
+                            failedAttempts++
+                            if (failedAttempts == allAddresses.size) {
+                                onError(IllegalStateException("Failed to find device"))
+                            }
                         }
-                        socket.close()
-                        socket.disconnect()
+                        socket.connect()
+                        socket.emit("trying", "knock knock", Ack {
+                            if (socket.connected()) {
+                                serverFound = true
+                                failedAttempts = -allAddresses.size
+                                onSuccess(address)
+                            }
+                        })
                     }
-                    socket.connect()
-                    socket.emit("trying", "knock knock", Ack {
-                        if (socket.connected()) {
-                            callback(current)
-                            stop = true
-                            sockets.forEach { it.close(); it.disconnect() }
-                        }
-                    })
-                    return@map socket
-                }.subscribe {
-                    sockets.add(it)
-                }
+        }
     }
 
     /**

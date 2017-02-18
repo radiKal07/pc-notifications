@@ -23,7 +23,7 @@ export class Router extends Component {
                     this.state.layout == layouts.PAIRING
                     &&
                     <PairingView onFinish={(port) => { 
-                                this.setState({...this.state, layout: layouts.HOME, snackbarOpen: true, snackbarMsg: 'Connection successfully'}) 
+                                this.setState({...this.state, layout: layouts.HOME, snackbarOpen: true, snackbarMsg: 'Connected successfully'}) 
                             } 
                         } 
                     />

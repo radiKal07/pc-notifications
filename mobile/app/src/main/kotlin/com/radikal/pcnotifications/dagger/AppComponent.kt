@@ -1,7 +1,6 @@
 package com.radikal.pcnotifications.dagger
 
-import com.radikal.pcnotifications.activities.MainActivity
-import com.radikal.pcnotifications.fragments.PairingFragment
+import com.radikal.pcnotifications.view.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 
@@ -12,5 +11,4 @@ import javax.inject.Singleton
 @Component(modules = arrayOf(DaggerModule::class))
 interface AppComponent {
     fun inject(activity: MainActivity)
-    fun inject(pairingFragment: PairingFragment)
 }

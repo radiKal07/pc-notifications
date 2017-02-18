@@ -1,4 +1,4 @@
-package com.radikal.pcnotifications.validators
+package com.radikal.pcnotifications.model.validators
 
 /**
  * Created by tudor on 27.12.2016.
