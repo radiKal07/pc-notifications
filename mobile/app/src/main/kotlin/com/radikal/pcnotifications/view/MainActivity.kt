@@ -2,7 +2,6 @@ package com.radikal.pcnotifications.view
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
@@ -14,7 +13,6 @@ import com.radikal.pcnotifications.MainApplication
 import com.radikal.pcnotifications.R
 import com.radikal.pcnotifications.R.id.my_toolbar
 import com.radikal.pcnotifications.contracts.PairingContract
-import com.radikal.pcnotifications.services.CustomNotificationListenerService
 import com.radikal.pcnotifications.utils.snackbar
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_main.drawerlayout as drawerLayout
@@ -53,7 +51,6 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
         }
 
         pairingPresenter.setView(this)
-        startService(Intent(this, CustomNotificationListenerService::class.java))
     }
 
     fun showPairingCodeDialog() {
