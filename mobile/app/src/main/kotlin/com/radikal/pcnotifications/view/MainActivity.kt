@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
         }
     }
 
-    override fun onServerFound() {
+    override fun onServerFound(ip: String, port: Int) {
         runOnUiThread { hideServerSearch() }
     }
 

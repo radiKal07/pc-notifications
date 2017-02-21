@@ -16,7 +16,7 @@ class PairingPresenter @Inject constructor(var networkDiscovery: NetworkDiscover
             networkDiscovery.getServerIp(port!!.toInt(), onSuccess = {
                 // TODO save server Ip
                 pairingView.showMessage("Connected successfully")
-                pairingView.onServerFound()
+                pairingView.onServerFound(it, port.toInt())
             }, onError = {
                 pairingView.showMessage(it.message ?: "Failed to find device")
                 pairingView.onServerFindFailed()

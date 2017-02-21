@@ -4,7 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.net.wifi.WifiManager
 import com.radikal.pcnotifications.contracts.PairingContract
+import com.radikal.pcnotifications.model.service.DeviceCommunicator
 import com.radikal.pcnotifications.model.service.NetworkDiscovery
+import com.radikal.pcnotifications.model.service.impl.SocketIOCommunicator
 import com.radikal.pcnotifications.model.service.impl.SocketIONetworkDiscovery
 import com.radikal.pcnotifications.model.validators.Validator
 import com.radikal.pcnotifications.model.validators.impl.PortValidator
@@ -50,5 +52,11 @@ class DaggerModule(val application: Application) {
     @Singleton
     fun pairingPresenter(@Named("socketIONetworkDiscovery") networkDiscovery: NetworkDiscovery): PairingContract.Presenter {
         return PairingPresenter(networkDiscovery, portValidator())
+    }
+
+    @Provides
+    @Singleton
+    fun deviceCommunicator() : DeviceCommunicator {
+        return SocketIOCommunicator()
     }
 }

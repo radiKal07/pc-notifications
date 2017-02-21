@@ -6,7 +6,7 @@ package com.radikal.pcnotifications.contracts
 interface PairingContract {
     interface View : BaseView {
         fun showMessage(message: String)
-        fun onServerFound()
+        fun onServerFound(ip: String, port: Int)
         fun onServerFindFailed()
     }
 

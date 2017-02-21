@@ -1,11 +1,10 @@
 package com.radikal.pcnotifications.services
 
+import android.content.Intent
+import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
-import android.content.Intent
-import android.os.IBinder
-import android.provider.Settings
 import com.radikal.pcnotifications.model.domain.Notification
 import com.radikal.pcnotifications.model.domain.Sms
 import com.radikal.pcnotifications.services.util.SmsIdentifier
@@ -41,6 +40,7 @@ class CustomNotificationListenerService @Inject constructor(var smsIdentifier: S
         val notification = Notification(title, text)
         //TODO send it
         if (smsIdentifier.isSms(applicationContext, sbn)) {
+            // because some SMS app may block the broadcast of SMSs we have to get them manually from the notifications
             val sms = Sms(title, extras.getString("android.bigText") ?: "")
             // TODO send it
         }

@@ -42,7 +42,6 @@ class SocketIONetworkDiscovery @Inject constructor(var wifiManager: WifiManager)
                         val socket = IO.socket("http://$address:$port")
                         socket.on("connect_error") {
                             socket.close()
-                            socket.disconnect()
                             failedAttempts++
                             if (failedAttempts == allAddresses.size) {
                                 onError(IllegalStateException("Failed to find device"))
@@ -54,6 +53,7 @@ class SocketIONetworkDiscovery @Inject constructor(var wifiManager: WifiManager)
                                 serverFound = true
                                 failedAttempts = -allAddresses.size
                                 onSuccess(address)
+                                socket.close()
                             }
                         })
                     }
