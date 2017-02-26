@@ -14,14 +14,16 @@ class SocketIOCommunicator : DeviceCommunicator {
     private val NOTIFICATION_POSTED_EVENT = "notification_posted"
     private val SMS_POSTED_EVENT = "sms_posted"
     private val SEND_SMS_EVENT = "send_sms"
-
+    private val SERVER_DISCONNECTED = "server_disconnected"
+    private val CONNECT_ERROR = "connect_error"
     private var socket: Socket? = null
 
     override fun connectToServer(ip: String, port: Int) {
         socket = IO.socket("http://$ip:$port")
 
-        socket!!.on("connect_error") {
-            throw DeviceNotConnectedException("")
+        socket!!.on(CONNECT_ERROR) {
+            socket!!.close()
+            throw DeviceNotConnectedException("Failed to initialize connection")
         }
         // get ip and port form persistence and create the socket
         // add send sms listener event on the socket

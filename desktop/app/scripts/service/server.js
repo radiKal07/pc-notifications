@@ -3,7 +3,7 @@ import IO from 'socket.io';
 import ip from 'ip';
 import {ipcMain} from 'electron';
 
-export const startServer = (win) => {
+export const startServer = (win, settingsDao) => {
     let server = http.createServer();
     let io = new IO(server);
     let port = 0;
@@ -12,6 +12,7 @@ export const startServer = (win) => {
         socket.on('trying', function(data, callback){
             console.log('client trying to connect: ', data);
             win.webContents.send('pairing-done', port);
+            settingsDao.save({port: port})
             callback({msg: 'primit'});
         });
     });

@@ -2,15 +2,20 @@ package com.radikal.pcnotifications.dagger
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import android.net.wifi.WifiManager
+import android.preference.PreferenceManager
 import com.radikal.pcnotifications.contracts.PairingContract
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
 import com.radikal.pcnotifications.model.service.NetworkDiscovery
+import com.radikal.pcnotifications.model.service.ServerDetailsDao
+import com.radikal.pcnotifications.model.service.impl.SharedPreferencesServerDetailsDao
 import com.radikal.pcnotifications.model.service.impl.SocketIOCommunicator
 import com.radikal.pcnotifications.model.service.impl.SocketIONetworkDiscovery
 import com.radikal.pcnotifications.model.validators.Validator
 import com.radikal.pcnotifications.model.validators.impl.PortValidator
 import com.radikal.pcnotifications.presenter.PairingPresenter
+import com.radikal.pcnotifications.services.util.SmsIdentifier
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -26,6 +31,12 @@ class DaggerModule(val application: Application) {
     @Singleton
     fun application(): Application {
         return application
+    }
+
+    @Provides
+    @Singleton
+    fun sharedPreferences(): SharedPreferences {
+        return PreferenceManager.getDefaultSharedPreferences(application.applicationContext)
     }
 
     @Provides
@@ -58,5 +69,17 @@ class DaggerModule(val application: Application) {
     @Singleton
     fun deviceCommunicator() : DeviceCommunicator {
         return SocketIOCommunicator()
+    }
+
+    @Provides
+    @Singleton
+    fun smsIdentifier(): SmsIdentifier {
+        return SmsIdentifier()
+    }
+
+    @Provides
+    @Singleton
+    fun serverDetailsDao(sharedPreferences: SharedPreferences): ServerDetailsDao {
+        return SharedPreferencesServerDetailsDao(sharedPreferences)
     }
 }

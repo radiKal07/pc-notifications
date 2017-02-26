@@ -1,9 +1,14 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import url from 'url';
+import datastore from 'nedb-promise';
 import { startServer } from './server.js';
+import {SettingsDao} from './SettingsDao.js'
 
 let win
+
+let settingsStore = datastore({filename: app.getPath('userData') + '/settings.json', autoload: true})
+var settingsDao = new SettingsDao({settingsStore});
 
 function createWindow() {
         win = new BrowserWindow({ width: 1280, height: 720 })
@@ -20,7 +25,7 @@ function createWindow() {
             win = null
         })
 
-        startServer(win);
+        startServer(win, settingsDao);
     }
 
 app.on('ready', createWindow)

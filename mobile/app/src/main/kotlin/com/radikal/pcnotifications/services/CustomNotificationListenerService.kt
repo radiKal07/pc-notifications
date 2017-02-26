@@ -5,6 +5,7 @@ import android.os.IBinder
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
+import com.radikal.pcnotifications.MainApplication
 import com.radikal.pcnotifications.model.domain.Notification
 import com.radikal.pcnotifications.model.domain.Sms
 import com.radikal.pcnotifications.services.util.SmsIdentifier
@@ -15,14 +16,19 @@ import javax.inject.Inject
 /**
  * Created by tudor on 17.02.2017.
  */
-class CustomNotificationListenerService @Inject constructor(var smsIdentifier: SmsIdentifier) : NotificationListenerService() {
+class CustomNotificationListenerService : NotificationListenerService() {
     val TAG = javaClass.simpleName
+
+    @Inject
+    lateinit var smsIdentifier: SmsIdentifier
 
     override fun onBind(intent: Intent): IBinder? {
         return super.onBind(intent)
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
+        (application as MainApplication).appComponent.inject(this)
+
         Log.v(TAG, "Received notification")
         super.onNotificationPosted(sbn)
         if (sbn == null) {
@@ -38,8 +44,10 @@ class CustomNotificationListenerService @Inject constructor(var smsIdentifier: S
         }
 
         val notification = Notification(title, text)
+        Log.v(TAG, notification.toString())
         //TODO send it
         if (smsIdentifier.isSms(applicationContext, sbn)) {
+            Log.v(TAG, "notification is SMS")
             // because some SMS app may block the broadcast of SMSs we have to get them manually from the notifications
             val sms = Sms(title, extras.getString("android.bigText") ?: "")
             // TODO send it

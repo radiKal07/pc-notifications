@@ -13,6 +13,8 @@ import com.radikal.pcnotifications.MainApplication
 import com.radikal.pcnotifications.R
 import com.radikal.pcnotifications.R.id.my_toolbar
 import com.radikal.pcnotifications.contracts.PairingContract
+import com.radikal.pcnotifications.model.domain.ServerDetails
+import com.radikal.pcnotifications.model.service.ServerDetailsDao
 import com.radikal.pcnotifications.utils.snackbar
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_main.drawerlayout as drawerLayout
@@ -28,6 +30,9 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
 
     @Inject
     lateinit var pairingPresenter: PairingContract.Presenter
+
+    @Inject
+    lateinit var serverDetailsDao: ServerDetailsDao
 
     var dialog: DialogInterface? = null
 
@@ -83,7 +88,8 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
         }
     }
 
-    override fun onServerFound(ip: String, port: Int) {
+    override fun onServerFound(serverDetails: ServerDetails) {
+        serverDetailsDao.save(serverDetails)
         runOnUiThread { hideServerSearch() }
     }
 
