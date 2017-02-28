@@ -13,6 +13,7 @@ import com.radikal.pcnotifications.MainApplication
 import com.radikal.pcnotifications.R
 import com.radikal.pcnotifications.R.id.my_toolbar
 import com.radikal.pcnotifications.contracts.PairingContract
+import com.radikal.pcnotifications.exceptions.ServerDetailsNotFoundException
 import com.radikal.pcnotifications.model.domain.ServerDetails
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
 import com.radikal.pcnotifications.utils.snackbar
@@ -23,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_main.my_toolbar as toolbar
 import kotlinx.android.synthetic.main.activity_main.add_device_fab as addDeviceFab
 import kotlinx.android.synthetic.main.activity_main.find_server_progress_bar as findServerProgressBar
 import kotlinx.android.synthetic.main.activity_main.find_server_text_view as findServerTextView
+import kotlinx.android.synthetic.main.activity_main.server_status_text_view as serverStatusTextView
 
 
 class MainActivity : AppCompatActivity(), PairingContract.View {
@@ -55,7 +57,20 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
             showPairingCodeDialog()
         }
 
+        try {
+            showServerStatus()
+            addDeviceFab.visibility = View.GONE
+        } catch (e: ServerDetailsNotFoundException) {
+            addDeviceFab.visibility = View.VISIBLE
+        }
+
         pairingPresenter.setView(this)
+    }
+
+    private fun showServerStatus() {
+        val retrieve = serverDetailsDao.retrieve()
+        serverStatusTextView.setText("Connected to: ${retrieve.ip}:${retrieve.port}")
+        serverStatusTextView.visibility = View.VISIBLE
     }
 
     fun showPairingCodeDialog() {

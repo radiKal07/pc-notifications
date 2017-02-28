@@ -4,7 +4,7 @@ export class SettingsDao {
     }
 
     async save(settings) {
-        console.log('saving: ', settings);
+        console.log('saving settings: ', settings);
         let prev = await this.getSettings();
         await this.store.remove({});
         let newSettings;
@@ -18,6 +18,7 @@ export class SettingsDao {
 
     async getSettings() {
         let settings = await this.store.find({});
+        console.log('found settings: ', settings);
         if (settings) {
             return settings[0];
         }
@@ -25,6 +26,7 @@ export class SettingsDao {
     }
 
     async getPort() {
-        return await this.getSettings().port;
+        let settings = await this.getSettings();
+        return settings.port;
     }
 }

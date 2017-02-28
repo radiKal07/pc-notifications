@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.wifi.WifiManager
 import android.util.Log
 import com.radikal.pcnotifications.MainApplication
+import com.radikal.pcnotifications.model.service.DeviceCommunicator
 import javax.inject.Inject
 
 /**
@@ -16,14 +17,17 @@ class WifiStateListener : BroadcastReceiver() {
     @Inject
     lateinit var wifiManager: WifiManager
 
+    @Inject
+    lateinit var deviceCommunicator: DeviceCommunicator
+
     override fun onReceive(context: Context?, intent: Intent?) {
         (context!!.applicationContext as MainApplication).appComponent.inject(this)
         if (wifiManager.isWifiEnabled) {
             Log.v(TAG, "Wi-Fi enabled")
-            // TODO connect to the server
+            deviceCommunicator.connect()
         } else {
             Log.v(TAG, "Wi-Fi disabled")
-            // TODO disconnect from the server
+            deviceCommunicator.disconnect()
         }
     }
 }

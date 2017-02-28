@@ -9,5 +9,6 @@ import com.radikal.pcnotifications.model.domain.Sms
 interface DeviceCommunicator {
     fun postNotification(notification: Notification)
     fun postSms(sms: Sms)
-    fun connectToServer(ip: String, port: Int)
+    fun connect()
+    fun disconnect()
 }

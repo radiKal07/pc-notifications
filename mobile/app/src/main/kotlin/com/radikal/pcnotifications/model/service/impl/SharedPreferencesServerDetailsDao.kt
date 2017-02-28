@@ -22,7 +22,7 @@ class SharedPreferencesServerDetailsDao @Inject constructor(var sharedPreference
 
     override fun retrieve(): ServerDetails {
         val ip = sharedPreferences.getString(SERVER_IP, null)
-        val port = sharedPreferences.getInt(SERVER_IP, -1)
+        val port = sharedPreferences.getInt(SERVER_PORT, -1)
 
         if (ip == null || port == -1) {
             throw ServerDetailsNotFoundException("Server details not found")

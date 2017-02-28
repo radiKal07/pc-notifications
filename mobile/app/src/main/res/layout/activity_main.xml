@@ -47,6 +47,13 @@
                 android:text="@string/finding_server"
                 android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/server_status_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone" />
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/add_device_fab"
                 android:layout_width="wrap_content"
