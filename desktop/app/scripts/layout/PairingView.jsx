@@ -16,13 +16,13 @@ export class PairingView extends Component {
         this.handlePairDevice = this.handlePairDevice.bind(this);
         this.handleClosePairDialog = this.handleClosePairDialog.bind(this);
 
-        ipcRenderer.on('port-found', (event, port) => {  
+        ipcRenderer.on('port-found', (event, port) => {
             this.setState({...this.state, port: port});
         });
 
-        ipcRenderer.on('pairing-done', (event, port) => {
+        ipcRenderer.on('client_connected', (event) => {
             this.setState({...this.state, pairDialogOpen: false});
-            this.props.onFinish(this.state.port);
+            this.props.onFinish();
         });
     }
 
@@ -61,7 +61,7 @@ export class PairingView extends Component {
 
     handlePairDevice() {
         this.setState({...this.state, pairDialogOpen: true});
-        ipcRenderer.send('start-pairing');
+        ipcRenderer.send('retrieve-port');
     }
 
     handleClosePairDialog() {

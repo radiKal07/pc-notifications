@@ -8,4 +8,5 @@ import com.radikal.pcnotifications.model.domain.ServerDetails
 interface ServerDetailsDao {
     fun save(serverDetails: ServerDetails)
     fun retrieve(): ServerDetails
+    fun delete()
 }

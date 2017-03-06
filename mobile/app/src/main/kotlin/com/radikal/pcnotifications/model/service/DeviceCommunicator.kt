@@ -11,4 +11,5 @@ interface DeviceCommunicator {
     fun postSms(sms: Sms)
     fun connect()
     fun disconnect()
+    fun isConnected(): Boolean
 }

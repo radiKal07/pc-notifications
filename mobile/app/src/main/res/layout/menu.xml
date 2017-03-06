@@ -12,7 +12,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/test"
+        android:id="@+id/menu_square"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="@color/colorPrimary">
@@ -20,17 +20,26 @@
     </RelativeLayout>
 
     <TextView
-        android:layout_below="@id/test"
-        android:id="@+id/home"
+        android:layout_below="@id/menu_square"
+        android:id="@+id/home_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="HOME"/>
 
     <TextView
+        android:id="@+id/settings_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SETTINGS"
-        android:layout_below="@id/home"/>
+        android:layout_below="@id/home_text_view"/>
+
+    <!-- dev only -->
+    <Button
+        android:id="@+id/forget_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/settings_text_view"
+        android:text="Forget"/>
 </RelativeLayout>
 
 </com.mxn.soul.flowingdrawer_core.FlowingMenuLayout>

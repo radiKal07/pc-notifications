@@ -2,6 +2,7 @@ package com.radikal.pcnotifications.model.service.impl
 
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
+import android.util.Log
 import com.radikal.pcnotifications.model.service.NetworkDiscovery
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -18,7 +19,7 @@ import javax.inject.Inject
  */
 class SocketIONetworkDiscovery @Inject constructor(var wifiManager: WifiManager) : NetworkDiscovery {
 
-    override fun getServerIp(port: Int, onSuccess: (String) -> Unit, onError: (Exception) -> Unit) {
+    override fun getServerIp(port: Int, onSuccess: (String, String) -> Unit, onError: (Exception) -> Unit) {
         if (!wifiManager.isWifiEnabled) {
             onError(IllegalStateException("Please enable Wi-Fi"))
             return
@@ -28,6 +29,7 @@ class SocketIONetworkDiscovery @Inject constructor(var wifiManager: WifiManager)
         // due to Android bug (netmask is always zero) we have to find this value manually
         val netmask = getNetmask(wifiInterface)
         val allAddresses = getAddressesInRange(wifiManager.dhcpInfo.gateway, netmask)
+        val clientIp: String = Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
 
         var failedAttempts = 0
         var serverFound = false
@@ -48,11 +50,11 @@ class SocketIONetworkDiscovery @Inject constructor(var wifiManager: WifiManager)
                             }
                         }
                         socket.connect()
-                        socket.emit("trying", "knock knock", Ack {
+                        socket.emit("server_discovery", clientIp, Ack {
                             if (socket.connected()) {
                                 serverFound = true
                                 failedAttempts = -allAddresses.size
-                                onSuccess(address)
+                                onSuccess(address, it[0].toString())
                                 socket.close()
                             }
                         })

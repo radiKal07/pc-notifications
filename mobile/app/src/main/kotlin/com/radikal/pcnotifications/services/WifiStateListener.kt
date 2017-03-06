@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.wifi.WifiManager
 import android.util.Log
 import com.radikal.pcnotifications.MainApplication
+import com.radikal.pcnotifications.exceptions.DeviceNotConnectedException
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
 import javax.inject.Inject
 
@@ -24,10 +25,14 @@ class WifiStateListener : BroadcastReceiver() {
         (context!!.applicationContext as MainApplication).appComponent.inject(this)
         if (wifiManager.isWifiEnabled) {
             Log.v(TAG, "Wi-Fi enabled")
-            deviceCommunicator.connect()
+            try {
+                Thread.sleep(10000)
+                deviceCommunicator.connect()
+            } catch (e: DeviceNotConnectedException) {
+                Log.e(TAG, "Failed to connect", e)
+            }
         } else {
             Log.v(TAG, "Wi-Fi disabled")
-            deviceCommunicator.disconnect()
         }
     }
 }

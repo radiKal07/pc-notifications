@@ -64,14 +64,21 @@ class DaggerModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun pairingPresenter(@Named("socketIONetworkDiscovery") networkDiscovery: NetworkDiscovery): PairingContract.Presenter {
-        return PairingPresenter(networkDiscovery, portValidator())
+    fun pairingPresenter(@Named("socketIONetworkDiscovery") networkDiscovery: NetworkDiscovery, serverDetailsDao: ServerDetailsDao): PairingContract.Presenter {
+        val pairingPresenter = PairingPresenter()
+        pairingPresenter.networkDiscovery = networkDiscovery
+        pairingPresenter.portValidator = portValidator()
+        pairingPresenter.serverDetailsDao = serverDetailsDao
+        return pairingPresenter
     }
 
     @Provides
     @Singleton
-    fun deviceCommunicator() : DeviceCommunicator {
-        return SocketIOCommunicator()
+    fun deviceCommunicator(serverDetailsDao: ServerDetailsDao, dataSerializer: DataSerializer): DeviceCommunicator {
+        val socketIOCommunicator = SocketIOCommunicator()
+        socketIOCommunicator.serverDetailsDao = serverDetailsDao
+        socketIOCommunicator.dataSerializer = dataSerializer
+        return socketIOCommunicator
     }
 
     @Provides

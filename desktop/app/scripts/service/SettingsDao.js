@@ -3,30 +3,29 @@ export class SettingsDao {
         this.store = args.settingsStore;
     }
 
-    async save(settings) {
-        console.log('saving settings: ', settings);
-        let prev = await this.getSettings();
-        await this.store.remove({});
-        let newSettings;
-        if (settings.port) {
-            newSettings = Object.assign({}, prev, {
-                port: settings.port
-            });
-        }
-        await this.store.insert(newSettings)
+    async savePort(port) {
+        console.log('saving port: ', port);
+        await this.store.update({name: 'port'}, {$set: {value: port}}, {upsert: true});
     }
 
-    async getSettings() {
-        let settings = await this.store.find({});
-        console.log('found settings: ', settings);
-        if (settings) {
-            return settings[0];
+    async saveClientIp(clientIp) {
+        console.log('saving client ip: ', clientIp);
+        await this.store.update({name: 'clientIp'}, {$set: {value: clientIp}}, {upsert: true});
+    }
+
+    async getPort() {
+        let portSettings = await this.store.find({name: 'port'});
+        if (portSettings && portSettings.length > 0) {
+            return portSettings[0].value;
         }
         return null;
     }
 
-    async getPort() {
-        let settings = await this.getSettings();
-        return settings.port;
+    async getClientIp() {
+        let clientIp = await this.store.find({name: 'clientIp'});
+        if (clientIp && clientIp.length > 0) {
+            return clientIp[0].value;
+        }
+        return null;
     }
 }

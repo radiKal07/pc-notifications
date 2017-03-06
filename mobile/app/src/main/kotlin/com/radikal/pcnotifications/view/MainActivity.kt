@@ -2,6 +2,7 @@ package com.radikal.pcnotifications.view
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
@@ -16,6 +17,7 @@ import com.radikal.pcnotifications.contracts.PairingContract
 import com.radikal.pcnotifications.exceptions.ServerDetailsNotFoundException
 import com.radikal.pcnotifications.model.domain.ServerDetails
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
+import com.radikal.pcnotifications.services.ServerWakeListener
 import com.radikal.pcnotifications.utils.snackbar
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_main.drawerlayout as drawerLayout
@@ -25,6 +27,7 @@ import kotlinx.android.synthetic.main.activity_main.add_device_fab as addDeviceF
 import kotlinx.android.synthetic.main.activity_main.find_server_progress_bar as findServerProgressBar
 import kotlinx.android.synthetic.main.activity_main.find_server_text_view as findServerTextView
 import kotlinx.android.synthetic.main.activity_main.server_status_text_view as serverStatusTextView
+import kotlinx.android.synthetic.main.menu.forget_button as forgetButton
 
 
 class MainActivity : AppCompatActivity(), PairingContract.View {
@@ -65,11 +68,19 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
         }
 
         pairingPresenter.setView(this)
+
+        forgetButton.setOnClickListener {
+            serverDetailsDao.delete()
+            addDeviceFab.visibility = View.VISIBLE
+        }
+
+        val serverWakeIntent = Intent(this, ServerWakeListener::class.java)
+        startService(serverWakeIntent)
     }
 
     private fun showServerStatus() {
         val retrieve = serverDetailsDao.retrieve()
-        serverStatusTextView.setText("Connected to: ${retrieve.ip}:${retrieve.port}")
+        serverStatusTextView.setText("Connected to: ${retrieve.hostname} (${retrieve.ip}:${retrieve.port})")
         serverStatusTextView.visibility = View.VISIBLE
     }
 
@@ -104,7 +115,6 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
     }
 
     override fun onServerFound(serverDetails: ServerDetails) {
-        serverDetailsDao.save(serverDetails)
         runOnUiThread { hideServerSearch() }
     }
 
