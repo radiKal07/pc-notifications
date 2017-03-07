@@ -51,15 +51,15 @@ class CustomNotificationListenerService : NotificationListenerService() {
         }
 
         val extras = sbn.notification.extras
-        val title = extras.getString("android.title")
-        val text = extras.getString("android.text")
+        val title = extras.get("android.title")?.toString()
+        val text = extras.get("android.text")?.toString()
 
         if (StringUtils.isBlank(title) || StringUtils.isBlank(text)) {
             Log.v(TAG, "Notification has no title or text")
             return
         }
 
-        val notification = Notification(title, text)
+        val notification = Notification(title!!, text!!)
         Log.v(TAG, notification.toString())
         deviceCommunicator.postNotification(notification)
 

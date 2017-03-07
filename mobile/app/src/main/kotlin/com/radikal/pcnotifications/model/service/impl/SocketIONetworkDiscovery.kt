@@ -18,6 +18,7 @@ import javax.inject.Inject
  * Created by tudor on 14.12.2016.
  */
 class SocketIONetworkDiscovery @Inject constructor(var wifiManager: WifiManager) : NetworkDiscovery {
+    val TAG = javaClass.simpleName
 
     override fun getServerIp(port: Int, onSuccess: (String, String) -> Unit, onError: (Exception) -> Unit) {
         if (!wifiManager.isWifiEnabled) {
@@ -46,12 +47,14 @@ class SocketIONetworkDiscovery @Inject constructor(var wifiManager: WifiManager)
                             socket.close()
                             failedAttempts++
                             if (failedAttempts == allAddresses.size) {
+                                Log.v(TAG, "server_discovery failed")
                                 onError(IllegalStateException("Failed to find device"))
                             }
                         }
                         socket.connect()
                         socket.emit("server_discovery", clientIp, Ack {
                             if (socket.connected()) {
+                                Log.v(TAG, "server_discovery succeeded")
                                 serverFound = true
                                 failedAttempts = -allAddresses.size
                                 onSuccess(address, it[0].toString())

@@ -2,13 +2,15 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import url from 'url';
 import datastore from 'nedb-promise';
-import { startServer } from './server.js';
+import { Server } from './Server.js';
+import { ipcMain } from 'electron';
 import {SettingsDao} from './SettingsDao.js'
 
 let win
 
 let settingsStore = datastore({filename: app.getPath('userData') + '/settings.json', autoload: true})
-var settingsDao = new SettingsDao({settingsStore});
+let settingsDao = new SettingsDao({settingsStore});
+let server = new Server(settingsDao);
 
 function createWindow() {
         win = new BrowserWindow({ width: 1280, height: 720 })
@@ -19,13 +21,19 @@ function createWindow() {
             slashes: true
         }))
 
-        //win.webContents.openDevTools()
-
         win.on('closed', () => {
             win = null
         })
 
-        startServer(win, settingsDao);
+        server.startServer();   
+        server.setOnClientConnected(() => {
+            win.webContents.send('client_connected');
+        }); 
+
+        ipcMain.on('retrieve-port', async (event, arg) => {
+            let port = await server.getPort();
+            event.sender.send('port-found', port);
+        });
     }
 
 app.on('ready', createWindow)

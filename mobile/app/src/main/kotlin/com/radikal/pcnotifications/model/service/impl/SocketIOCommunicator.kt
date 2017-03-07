@@ -55,6 +55,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
                 }
             }
             socket!!.close()
+            socket = null
         }
 
         socket!!.on(SEND_SMS_EVENT) {
@@ -83,11 +84,19 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
     override fun postNotification(notification: Notification) {
         Log.v(TAG, "Posting notification")
+        if (!isConnected()) {
+            Log.v(TAG, "Socket not connected")
+            return
+        }
         socket?.emit(NOTIFICATION_POSTED_EVENT, dataSerializer.serialize(notification))
     }
 
     override fun postSms(sms: Sms) {
         Log.v(TAG, "Posting SMS")
+        if (!isConnected()) {
+            Log.v(TAG, "Socket not connected")
+            return
+        }
         socket?.emit(SMS_POSTED_EVENT, dataSerializer.serialize(sms))
     }
 
