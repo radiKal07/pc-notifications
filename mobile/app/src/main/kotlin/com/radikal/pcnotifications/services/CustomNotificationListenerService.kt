@@ -28,6 +28,7 @@ class CustomNotificationListenerService : NotificationListenerService() {
     lateinit var deviceCommunicator: DeviceCommunicator
 
     override fun onBind(intent: Intent): IBinder? {
+        Log.v(TAG, "onBind NotificationListener")
         return super.onBind(intent)
     }
 
