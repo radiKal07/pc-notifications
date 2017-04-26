@@ -1,20 +1,15 @@
 package com.radikal.pcnotifications.dagger
 
 import android.app.Application
+import android.content.ContentResolver
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.wifi.WifiManager
 import android.preference.PreferenceManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.radikal.pcnotifications.contracts.PairingContract
-import com.radikal.pcnotifications.model.service.DataSerializer
-import com.radikal.pcnotifications.model.service.DeviceCommunicator
-import com.radikal.pcnotifications.model.service.NetworkDiscovery
-import com.radikal.pcnotifications.model.service.ServerDetailsDao
-import com.radikal.pcnotifications.model.service.impl.JSONDataSerializer
-import com.radikal.pcnotifications.model.service.impl.SharedPreferencesServerDetailsDao
-import com.radikal.pcnotifications.model.service.impl.SocketIOCommunicator
-import com.radikal.pcnotifications.model.service.impl.SocketIONetworkDiscovery
+import com.radikal.pcnotifications.model.service.*
+import com.radikal.pcnotifications.model.service.impl.*
 import com.radikal.pcnotifications.model.validators.Validator
 import com.radikal.pcnotifications.model.validators.impl.PortValidator
 import com.radikal.pcnotifications.presenter.PairingPresenter
@@ -103,5 +98,19 @@ class DaggerModule(val application: Application) {
     @Singleton
     fun dataSerializer(objectMapper: ObjectMapper): DataSerializer {
         return JSONDataSerializer(objectMapper)
+    }
+
+    @Provides
+    @Singleton
+    fun contentResolver(): ContentResolver {
+        return application.contentResolver
+    }
+
+    @Provides
+    @Singleton
+    fun smsDao(contentResolver: ContentResolver): SmsDao {
+        val smsDaoImpl = SmsDaoImpl()
+        smsDaoImpl.contentResolver = contentResolver
+        return smsDaoImpl
     }
 }

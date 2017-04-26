@@ -8,6 +8,8 @@ import com.radikal.pcnotifications.model.domain.Sms
 import com.radikal.pcnotifications.model.service.DataSerializer
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
+import com.radikal.pcnotifications.model.service.SmsDao
+import io.socket.client.Ack
 import io.socket.client.IO
 import io.socket.client.Socket
 import javax.inject.Inject
@@ -21,6 +23,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
     private val NOTIFICATION_POSTED_EVENT = "notification_posted"
     private val SMS_POSTED_EVENT = "sms_posted"
     private val SEND_SMS_EVENT = "send_sms"
+    private val GET_ALL_SMS_EVENT = "get_all_sms"
     private val SERVER_DISCONNECTED = "server_disconnected"
     private val CONNECT_ERROR = "connect_error"
     private val CONNECT = "connect"
@@ -33,6 +36,9 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
     @Inject
     lateinit var dataSerializer: DataSerializer
 
+    @Inject
+    lateinit var smsDao: SmsDao
+
     override fun connect() {
         if (isConnected()) {
             return
@@ -41,6 +47,9 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
         try {
             val (hostname, ip, port) = serverDetailsDao.retrieve()
             socket = IO.socket("http://$ip:$port")
+            IO.setDefaultHostnameVerifier { hostname, session ->
+                return@setDefaultHostnameVerifier true
+            }
             Log.v(TAG, "Trying to connect to http://$ip:$port ($hostname)")
         } catch (e: ServerDetailsNotFoundException) {
             Log.e(TAG, "Failed to connect", e)
@@ -63,6 +72,13 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
             val sms = dataSerializer.deserialize(it.toString(), Sms::class.java)
             // TODO send sms to contact
             // "it" should contain the message and the contact
+        }
+
+        socket!!.on(GET_ALL_SMS_EVENT) {
+            Log.v(TAG, GET_ALL_SMS_EVENT)
+            if (it[0] is Ack) {
+                (it[0] as Ack).call(dataSerializer.serialize(smsDao.getAll()))
+            }
         }
 
         socket!!.on(SERVER_DISCONNECTED) {
@@ -104,7 +120,12 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
         if (socket == null) {
             return false
         }
-        return socket!!.connected()
+        val connected = socket!!.connected()
+        if (connected) {
+            Log.v(TAG, "Socket already connected")
+        }
+
+        return connected
     }
 
 }

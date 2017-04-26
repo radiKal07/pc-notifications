@@ -26,7 +26,7 @@ class WifiStateListener : BroadcastReceiver() {
         if (wifiManager.isWifiEnabled) {
             Log.v(TAG, "Wi-Fi enabled")
             try {
-                Thread.sleep(10000)
+                Thread.sleep(5000)
                 deviceCommunicator.connect()
             } catch (e: DeviceNotConnectedException) {
                 Log.e(TAG, "Failed to connect", e)
