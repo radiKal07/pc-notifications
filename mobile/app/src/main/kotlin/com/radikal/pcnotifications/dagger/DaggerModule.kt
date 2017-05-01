@@ -8,6 +8,8 @@ import android.net.wifi.WifiManager
 import android.preference.PreferenceManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.radikal.pcnotifications.contracts.PairingContract
+import com.radikal.pcnotifications.model.persistence.SmsDao
+import com.radikal.pcnotifications.model.persistence.impl.SqliteSmsDao
 import com.radikal.pcnotifications.model.service.*
 import com.radikal.pcnotifications.model.service.impl.*
 import com.radikal.pcnotifications.model.validators.Validator
@@ -69,10 +71,11 @@ class DaggerModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun deviceCommunicator(serverDetailsDao: ServerDetailsDao, dataSerializer: DataSerializer): DeviceCommunicator {
+    fun deviceCommunicator(serverDetailsDao: ServerDetailsDao, dataSerializer: DataSerializer, smsService: SmsService): DeviceCommunicator {
         val socketIOCommunicator = SocketIOCommunicator()
         socketIOCommunicator.serverDetailsDao = serverDetailsDao
         socketIOCommunicator.dataSerializer = dataSerializer
+        socketIOCommunicator.smsService = smsService
         return socketIOCommunicator
     }
 
@@ -109,8 +112,16 @@ class DaggerModule(val application: Application) {
     @Provides
     @Singleton
     fun smsDao(contentResolver: ContentResolver): SmsDao {
-        val smsDaoImpl = SmsDaoImpl()
+        val smsDaoImpl = SqliteSmsDao()
         smsDaoImpl.contentResolver = contentResolver
         return smsDaoImpl
+    }
+
+    @Provides
+    @Singleton
+    fun smsService(smsDao: SmsDao): SmsService {
+        val smsService = SmsServiceImpl()
+        smsService.smsDao = smsDao
+        return smsService
     }
 }

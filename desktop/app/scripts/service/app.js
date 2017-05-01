@@ -13,7 +13,7 @@ let settingsDao = new SettingsDao({settingsStore});
 let server = new Server(settingsDao);
 
 function createWindow() {
-        win = new BrowserWindow({ width: 640, height: 480 })
+        win = new BrowserWindow({ width: 1280, height: 720 })
 
         win.loadURL(url.format({
             pathname: path.join(__dirname, '../../index.html'),
@@ -30,10 +30,18 @@ function createWindow() {
             win.webContents.send('client_connected');
         }); 
 
-        ipcMain.on('retrieve-port', async (event, arg) => {
-            let port = await server.getPort();
-            event.sender.send('port-found', port);
+        server.setOnSmsListRecevied((smsList) => {
+            win.webContents.send('sms_list_response', smsList);
         });
+
+        ipcMain.on('retrieve_port', async (event, arg) => {
+            let port = await server.getPort();
+            event.sender.send('port_found', port);
+        });
+
+        ipcMain.on('retrieve_sms', async (event, arg) => {
+            server.getSmsList();
+        })
     }
 
 app.on('ready', createWindow)

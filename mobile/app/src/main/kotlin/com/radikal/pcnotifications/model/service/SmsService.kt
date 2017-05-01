@@ -3,8 +3,8 @@ package com.radikal.pcnotifications.model.service
 import com.radikal.pcnotifications.model.domain.Sms
 
 /**
- * Created by tudor on 25.04.2017.
+ * Created by tudor on 5/1/17.
  */
-interface SmsDao {
-    fun getAll(): List<Sms>
+interface SmsService {
+    fun getAllThreads(): Map<String, List<Sms>>
 }

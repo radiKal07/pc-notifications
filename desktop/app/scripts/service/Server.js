@@ -10,6 +10,8 @@ export class Server {
         this.settingsDao = settingsDao;
         this.server = null;
         this.onClientConnected = null;
+        this.onSmsListRecevied = null;
+        this.socket = null;
     }
 
     async startServer() {
@@ -18,7 +20,8 @@ export class Server {
 
         io.on('connection', async (socket) => {
             console.log('connection fired');
-            this.addSocketEvents(socket);
+            this.socket = socket;
+            this.addSocketEvents();
             if (this.onClientConnected) {
                 this.onClientConnected();
             }
@@ -71,8 +74,8 @@ export class Server {
         });
     }
 
-    async addSocketEvents(socket) {
-        socket.on('server_discovery', async (clientIp, callback) => {
+    async addSocketEvents() {
+        this.socket.on('server_discovery', async (clientIp, callback) => {
             console.log('Client trying to connect', clientIp);
             await this.settingsDao.saveClientIp(clientIp);
             callback(os.hostname());
@@ -81,7 +84,7 @@ export class Server {
             }
         });
 
-        socket.on('notification_posted', function (data) {
+        this.socket.on('notification_posted', function (data) {
             let notification = JSON.parse(data);
             console.log('received notification: ', data);
             
@@ -103,7 +106,17 @@ export class Server {
         return port;
     }
 
-    async setOnClientConnected(callback) {
+    setOnClientConnected(callback) {
         this.onClientConnected = callback;
+    }
+
+    setOnSmsListRecevied(callback) {
+        this.onSmsListRecevied = callback;
+    }
+
+    getSmsList() {
+        this.socket.emit('get_all_sms', async (smsList) => {
+            this.onSmsListRecevied(smsList);
+        });
     }
 }

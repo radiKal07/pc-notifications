@@ -67,8 +67,8 @@ class CustomNotificationListenerService : NotificationListenerService() {
         if (smsIdentifier.isSms(applicationContext, sbn)) {
             Log.v(TAG, "notification is SMS")
             // because some SMS app may block the broadcast of SMSs we have to get them manually from the notifications
-            val sms = Sms(title, extras.getString("android.bigText") ?: "")
-            deviceCommunicator.postSms(sms)
+            //val sms = Sms(title, extras.getString("android.bigText") ?: "")
+            //deviceCommunicator.postSms(sms)
         }
     }
 }

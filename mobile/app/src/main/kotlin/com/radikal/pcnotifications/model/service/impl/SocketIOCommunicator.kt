@@ -8,7 +8,8 @@ import com.radikal.pcnotifications.model.domain.Sms
 import com.radikal.pcnotifications.model.service.DataSerializer
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
-import com.radikal.pcnotifications.model.service.SmsDao
+import com.radikal.pcnotifications.model.persistence.SmsDao
+import com.radikal.pcnotifications.model.service.SmsService
 import io.socket.client.Ack
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -37,7 +38,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
     lateinit var dataSerializer: DataSerializer
 
     @Inject
-    lateinit var smsDao: SmsDao
+    lateinit var smsService: SmsService
 
     override fun connect() {
         if (isConnected()) {
@@ -77,7 +78,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
         socket!!.on(GET_ALL_SMS_EVENT) {
             Log.v(TAG, GET_ALL_SMS_EVENT)
             if (it[0] is Ack) {
-                (it[0] as Ack).call(dataSerializer.serialize(smsDao.getAll()))
+                (it[0] as Ack).call(dataSerializer.serialize(smsService.getAllThreads()))
             }
         }
 
