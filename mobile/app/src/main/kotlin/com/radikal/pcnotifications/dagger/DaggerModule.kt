@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.wifi.WifiManager
 import android.preference.PreferenceManager
+import android.telephony.TelephonyManager
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.radikal.pcnotifications.contracts.PairingContract
 import com.radikal.pcnotifications.model.persistence.SmsDao
@@ -111,10 +112,11 @@ class DaggerModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun smsDao(contentResolver: ContentResolver): SmsDao {
-        val smsDaoImpl = SqliteSmsDao()
-        smsDaoImpl.contentResolver = contentResolver
-        return smsDaoImpl
+    fun smsDao(contentResolver: ContentResolver, telephonyManager: TelephonyManager): SmsDao {
+        val sqliteSmsDao = SqliteSmsDao()
+        sqliteSmsDao.contentResolver = contentResolver
+        sqliteSmsDao.telephonyManager = telephonyManager
+        return sqliteSmsDao
     }
 
     @Provides
@@ -123,5 +125,11 @@ class DaggerModule(val application: Application) {
         val smsService = SmsServiceImpl()
         smsService.smsDao = smsDao
         return smsService
+    }
+
+    @Provides
+    @Singleton
+    fun telephonyManager(): TelephonyManager {
+        return application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
     }
 }

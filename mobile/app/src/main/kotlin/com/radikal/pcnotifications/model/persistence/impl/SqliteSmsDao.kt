@@ -2,12 +2,18 @@ package com.radikal.pcnotifications.model.persistence.impl
 
 import android.content.ContentResolver
 import android.net.Uri
+import android.provider.ContactsContract
+import android.telephony.TelephonyManager
+import android.util.Log
 import com.radikal.pcnotifications.model.domain.Sms
 import com.radikal.pcnotifications.model.persistence.SmsDao
 import com.radikal.pcnotifications.utils.RECEIVED
 import com.radikal.pcnotifications.utils.SENT
 import java.util.*
 import javax.inject.Inject
+import com.github.tamir7.contacts.Contact
+import com.github.tamir7.contacts.Contacts
+
 
 /**
  * Created by tudor on 25.04.2017.
@@ -18,6 +24,9 @@ class SqliteSmsDao @Inject constructor() : SmsDao {
 
     @Inject
     lateinit var contentResolver: ContentResolver
+
+    @Inject
+    lateinit var telephonyManager: TelephonyManager
 
     override fun getAllReceived(): List<Sms> {
         return getSms(smsInboxUri)
@@ -42,6 +51,18 @@ class SqliteSmsDao @Inject constructor() : SmsDao {
 
         while (cursor.moveToNext()) {
             var sender = cursor.getString(cursor.getColumnIndex("address"))
+
+            val q = Contacts.getQuery()
+            q.whereEqualTo(Contact.Field.PhoneNumber, sender)
+            val contacts = q.find()
+
+            if (contacts.size == 0) {
+                Log.d("SqliteSmsDai", "not found for: " + sender)
+                continue
+            }
+
+            sender = contacts[0].displayName
+
             var message = cursor.getString(cursor.getColumnIndex("body"))
             var date = cursor.getString(cursor.getColumnIndex("date"))
             smsList.add(Sms(sender, message, Date(date.toLong()), smsType))

@@ -5,9 +5,13 @@ export class SmsMenuItem extends Component {
         super(props);
     }
 
+    componentWillMount() {
+        this.handleTouchTap = this.handleTouchTap.bind(this);
+    }
+
     render() {
         return(
-            <div style={style.item}>
+            <div style={style.item} onTouchTap={this.handleTouchTap}>
                 <div style={style.icon}>
                     <i className="material-icons md-48">{this.props.icon}</i>
                 </div>
@@ -19,6 +23,11 @@ export class SmsMenuItem extends Component {
                 </div>
             </div>
         );
+    }
+
+    handleTouchTap() {
+        console.log('SmsMenuItem onTouchTap');
+        this.props.onSmsMenuItemSelected(this.props.smsThread);
     }
 }
 

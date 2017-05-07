@@ -1,6 +1,7 @@
 package com.radikal.pcnotifications
 
 import android.app.Application
+import com.github.tamir7.contacts.Contacts
 import com.radikal.pcnotifications.dagger.AppComponent
 import com.radikal.pcnotifications.dagger.DaggerAppComponent
 import com.radikal.pcnotifications.dagger.DaggerModule
@@ -16,5 +17,6 @@ class MainApplication : Application() {
         appComponent = DaggerAppComponent.builder()
                 .daggerModule(DaggerModule(this))
                 .build()
+        Contacts.initialize(this)
     }
 }

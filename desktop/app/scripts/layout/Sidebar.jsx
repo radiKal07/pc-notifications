@@ -8,17 +8,21 @@ export class Sidebar extends Component {
     render() {
         return(
             <div>
-                <div style={style.element} onTouchTap={() => {this.props.onSwitchLayout(layouts.HOME)}}>
+                <div style={style.element} onTouchTap={this.handleTouchTap.bind(this, layouts.HOME)}>
                     <i className="material-icons md-48">account_circle</i>
                 </div>
-                <div style={style.element} onTouchTap={() => {this.props.onSwitchLayout(layouts.SMS)}}>
+                <div style={style.element} onTouchTap={this.handleTouchTap.bind(this, layouts.SMS)}>
                     <i className="material-icons md-48">textsms</i>
                 </div>
-                <div style={style.element} onTouchTap={() => {this.props.onSwitchLayout(layouts.SETTINGS)}}>
+                <div style={style.element} onTouchTap={this.handleTouchTap.bind(this, layouts.SETTINGS)}>
                     <i className="material-icons md-48">settings</i>
                 </div>
             </div>
         );
+    }
+
+    handleTouchTap(layout) {
+        this.props.onSwitchLayout(layout);
     }
 }
 
