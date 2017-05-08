@@ -26,8 +26,7 @@ export class SmsMenuItem extends Component {
     }
 
     handleTouchTap() {
-        console.log('SmsMenuItem onTouchTap');
-        this.props.onSmsMenuItemSelected(this.props.smsThread);
+        this.props.onSmsMenuItemSelected();
     }
 }
 

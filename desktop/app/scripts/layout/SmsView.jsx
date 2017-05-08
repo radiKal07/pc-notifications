@@ -33,7 +33,11 @@ export class SmsView extends Component {
                         {this.state.smsList}
                     </div>
                     <div style={{...appStyleSheet.content, ...appStyleSheet.fullheight}}>
-                        <ChatView smsThread={this.state.currentSmsThread}/>
+                        {
+                            this.state.currentSmsThread
+                            &&
+                            <ChatView smsThread={this.state.currentSmsThread}/>
+                        }
                     </div>
                 </div>
             </div>
@@ -49,7 +53,7 @@ export class SmsView extends Component {
             }
             let currentValue = smsThreadsJson[addr];
             let lastMessage = currentValue[currentValue.length - 1].message;
-            let el = <SmsMenuItem key={addr} icon="message" senderName={addr} message={lastMessage} smsThread={currentValue} onSmsMenuItemSelected={this.handleSmsListClick}/>;
+            let el = <SmsMenuItem key={addr} icon="message" senderName={addr} message={lastMessage} onSmsMenuItemSelected={this.handleSmsListClick.bind(this, currentValue)}/>;
             console.log(el);
             smsList.push(el);
         }
@@ -58,6 +62,8 @@ export class SmsView extends Component {
 
     handleSmsListClick(smsList) {
         console.log('clicked on sms: ', smsList);
-        this.setState({...this.state, currentSmsThread: smsList});
+        let rand = Math.random() * (10 - 1) + 1;
+        console.log('rand: ', rand);
+        this.setState({...this.state, currentSmsThread: smsList, rand});
     }
 }
