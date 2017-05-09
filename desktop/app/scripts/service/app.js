@@ -13,7 +13,7 @@ let settingsDao = new SettingsDao({settingsStore});
 let server = new Server(settingsDao);
 
 function createWindow() {
-        win = new BrowserWindow({ width: 1280, height: 720 })
+        win = new BrowserWindow({ width: 1920, height: 1080 })
 
         win.loadURL(url.format({
             pathname: path.join(__dirname, '../../index.html'),

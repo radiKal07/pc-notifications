@@ -54,16 +54,13 @@ export class SmsView extends Component {
             let currentValue = smsThreadsJson[addr];
             let lastMessage = currentValue[currentValue.length - 1].message;
             let el = <SmsMenuItem key={addr} icon="message" senderName={addr} message={lastMessage} onSmsMenuItemSelected={this.handleSmsListClick.bind(this, currentValue)}/>;
-            console.log(el);
             smsList.push(el);
         }
         this.setState({...this.state, smsList});
     }
 
     handleSmsListClick(smsList) {
-        console.log('clicked on sms: ', smsList);
         let rand = Math.random() * (10 - 1) + 1;
-        console.log('rand: ', rand);
         this.setState({...this.state, currentSmsThread: smsList, rand});
     }
 }
