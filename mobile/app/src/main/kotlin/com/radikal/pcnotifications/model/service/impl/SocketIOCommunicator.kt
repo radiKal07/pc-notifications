@@ -70,9 +70,16 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
         socket!!.on(SEND_SMS_EVENT) {
             Log.v(TAG, SEND_SMS_EVENT)
-            val sms = dataSerializer.deserialize(it.toString(), Sms::class.java)
-            // TODO send sms to contact
-            // "it" should contain the message and the contact
+            if (it[0] != null && it.isNotEmpty() && it[0] is String) {
+                val smsJson = it[0]
+                val sms = dataSerializer.deserialize(smsJson.toString(), Sms::class.java)
+                // TODO send sms to contact
+                // "it" should contain the message and the contact
+                Log.v(TAG, sms.toString())
+            }
+            if (it.size >= 2 && it[1] != null && it[1] is Ack) {
+                (it[1] as Ack).call("OK")
+            }
         }
 
         socket!!.on(GET_ALL_SMS_EVENT) {

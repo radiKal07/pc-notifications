@@ -21,6 +21,7 @@ export class PairingView extends Component {
         });
 
         ipcRenderer.on('client_connected', (event) => {
+            console.log('ipcRenderer - client_connected');
             this.setState({...this.state, pairDialogOpen: false});
             this.props.onFinish();
         });

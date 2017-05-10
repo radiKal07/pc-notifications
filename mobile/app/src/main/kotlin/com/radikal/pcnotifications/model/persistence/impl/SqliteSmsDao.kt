@@ -2,7 +2,6 @@ package com.radikal.pcnotifications.model.persistence.impl
 
 import android.content.ContentResolver
 import android.net.Uri
-import android.provider.ContactsContract
 import android.telephony.TelephonyManager
 import android.util.Log
 import com.radikal.pcnotifications.model.domain.Sms

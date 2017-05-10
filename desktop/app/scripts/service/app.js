@@ -25,23 +25,34 @@ function createWindow() {
             win = null
         })
 
-        server.startServer();   
-        server.setOnClientConnected(() => {
-            win.webContents.send('client_connected');
-        }); 
+        win.webContents.on('did-finish-load', () => {
+            server.setOnClientConnected(() => {
+                console.log('win.send - client_connected');
+                win.webContents.send('client_connected');
+            }); 
 
-        server.setOnSmsListRecevied((smsList) => {
-            win.webContents.send('sms_list_response', smsList);
+            server.setOnSmsListRecevied((smsList) => {
+                win.webContents.send('sms_list_response', smsList);
+            });
+
+            ipcMain.on('retrieve_port', async (event, arg) => {
+                let port = await server.getPort();
+                event.sender.send('port_found', port);
+            });
+
+            ipcMain.on('retrieve_sms', async (event, arg) => {
+                console.log('ipcMain - retrieve_sms');
+                server.getSmsList();
+            });
+
+            ipcMain.on('send_sms', async (event, sms) => {
+                console.log('send_sms', sms);
+                server.sendSms(sms);
+                //win.webContents.send('sms_list_response', smsList);
+            });
+
+            server.startServer();
         });
-
-        ipcMain.on('retrieve_port', async (event, arg) => {
-            let port = await server.getPort();
-            event.sender.send('port_found', port);
-        });
-
-        ipcMain.on('retrieve_sms', async (event, arg) => {
-            server.getSmsList();
-        })
     }
 
 app.on('ready', createWindow)

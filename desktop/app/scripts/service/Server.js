@@ -115,8 +115,15 @@ export class Server {
     }
 
     getSmsList() {
+        console.log('get_all_sms');
         this.socket.emit('get_all_sms', async (smsList) => {
             this.onSmsListRecevied(smsList);
+        });
+    }
+
+    sendSms(sms) {
+        this.socket.emit('send_sms', JSON.stringify(sms), (answer) => {
+             console.log('answer - ', answer);
         });
     }
 }
