@@ -10,7 +10,7 @@ let gIndex = 0;
 export class ChatView extends Component {
     constructor(props) {
         super(props);
-        this.state = {smsThread: props.smsThread, smsMessage: ''};
+        this.state = {smsThread: props.smsThread, smsMessage: '', showInput: props.showInput};
     }
 
     componentWillMount() {
@@ -49,12 +49,16 @@ export class ChatView extends Component {
         return(
             <div style={style.content} ref={(div) => {this.chatBubbles = div;}}>
                 {this.state.chatBubbles}
-                <div style={style.smsInput}>
-                    <TextField style={style.textField} hintText="Type an SMS message" value={this.state.smsMessage} onChange={this.handleTextFieldChange}/>
-                    <IconButton style={style.mediumIcon} onTouchTap={this.sendSms}>
-                        <i className="material-icons md-48">send</i>
-                    </IconButton>
-                </div>
+                {
+                    this.state.showInput
+                    &&
+                    <div style={style.smsInput}>
+                        <TextField style={style.textField} hintText="Type an SMS message" value={this.state.smsMessage} onChange={this.handleTextFieldChange}/>
+                        <IconButton style={style.mediumIcon} onTouchTap={this.sendSms}>
+                            <i className="material-icons md-48">send</i>
+                        </IconButton>
+                    </div>
+                }
             </div>
         );
     }
@@ -91,7 +95,7 @@ export class ChatView extends Component {
             let sms = thread[index++];
             chatBubbles.push(<ChatBubble key={sms.message + index} message={sms.message} msgType={sms.type}/>);
         }
-        this.setState({...this.state, smsThread: props.smsThread, chatBubbles});
+        this.setState({...this.state, smsThread: props.smsThread, chatBubbles, showInput: props.showInput});
     }
 
     scrollToBottom() {
@@ -119,13 +123,14 @@ export class ChatView extends Component {
 const style = {
     content: {
         overflow: 'auto',
-        height: '100%'
+        height: 'calc(100% - 100px)'
     },
     smsInput: {
-        marginTop: '10px',
         float: 'right',
-        width: '100%',
-        backgroundColor: 'white'
+        width: 'calc(65% - 45.5px)', // width of the 3rd column minus the sidebar (sidebar is 70px, 65% of 70px is 45.5px)
+        backgroundColor: 'white',
+        position: 'absolute',
+        bottom: '0'
     },
     textField: {
         width: 'calc(100% - 116px)',

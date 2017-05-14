@@ -1,14 +1,55 @@
 import React, { Component } from 'react';
+import {List, ListItem, makeSelectable} from 'material-ui/List';
+import Divider from 'material-ui/Divider';
+import Subheader from 'material-ui/Subheader';
+import Avatar from 'material-ui/Avatar';
+import FontIcon from 'material-ui/FontIcon';
 import { appStyleSheet } from '../utils/Stylesheet.js';
 import { Sidebar } from './Sidebar.jsx';
-import { SmsMenuItem } from '../model/SmsMenuItem.jsx';
 import { ChatView } from './ChatView.jsx';
+import { colors } from '../utils/Stylesheet.js';
 var {ipcRenderer} = window.require('electron');  // import it from window due to collision with browserify
+
+let SelectableList = makeSelectable(List);
+
+function wrapState(ComposedComponent) {
+  return class SelectableList extends Component {
+    static propTypes = {
+      children: React.PropTypes.node.isRequired,
+      defaultValue: React.PropTypes.number.isRequired,
+    };
+
+    componentWillMount() {
+      this.setState({
+        selectedIndex: this.props.defaultValue,
+      });
+    }
+
+    handleRequestChange = (event, index) => {
+      this.setState({
+        selectedIndex: index,
+      });
+    };
+
+    render() {
+      return (
+        <ComposedComponent
+          value={this.state.selectedIndex}
+          onChange={this.handleRequestChange}
+        >
+          {this.props.children}
+        </ComposedComponent>
+      );
+    }
+  };
+}
+
+SelectableList = wrapState(SelectableList);
 
 export class SmsView extends Component {
     constructor(props) {
         super(props);
-        this.state = {currentSmsThread: []};
+        this.state = {currentSmsThread: [], showInput: false};
     }
 
     componentWillMount() {
@@ -26,10 +67,13 @@ export class SmsView extends Component {
                 </div>
                 <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.menu, ...appStyleSheet.fullheight}}>
-                        {this.generateSmsList(this.state.smsThreads)}
+                        <SelectableList defaultValue={1}>
+                            <Subheader>Latest messages</Subheader>
+                            {this.generateSmsList(this.state.smsThreads)}
+                        </SelectableList>
                     </div>
                     <div style={{...appStyleSheet.content, ...appStyleSheet.fullheight}}>
-                        <ChatView smsThread={this.state.currentSmsThread} onNewSms={this.onNewSms}/>
+                        <ChatView smsThread={this.state.currentSmsThread} showInput={this.state.showInput} onNewSms={this.onNewSms}/>
                     </div>
                 </div>
             </div>
@@ -50,7 +94,9 @@ export class SmsView extends Component {
     }
 
     handleSmsList(smsThreads) {
-        this.setState({...this.state, smsThreads: JSON.parse(smsThreads)});
+        let smsThreadsJson = JSON.parse(smsThreads);
+        this.setState({...this.state, smsThreads: smsThreadsJson});
+        this.handleSmsListClick(smsThreadsJson[Object.keys(smsThreadsJson)[0]]);
     }
 
     generateSmsList(smsThreads) {
@@ -58,20 +104,35 @@ export class SmsView extends Component {
             return;
         }
         let smsList = [];
+        let index = 1;
         for (var addr in smsThreads) {
             if (!smsThreads.hasOwnProperty(addr)) {
                 continue;
             }
             let currentValue = smsThreads[addr];
             let lastMessage = currentValue[currentValue.length - 1];
-            let el = <SmsMenuItem key={addr} icon="message" senderName={lastMessage.contact.displayName} message={lastMessage.message} onSmsMenuItemSelected={this.handleSmsListClick.bind(this, currentValue)}/>;
-            smsList.push(el);
+
+            let fancyEl = <ListItem
+                            value={index++}
+                            key={addr}
+                            leftAvatar={<Avatar icon={<FontIcon className="material-icons md-48">message</FontIcon>} />}
+                            primaryText={lastMessage.contact.displayName}
+                            secondaryText={
+                                <p>
+                                {lastMessage.message}
+                                </p>
+                            }
+                            onTouchTap={this.handleSmsListClick.bind(this, currentValue)}
+                            />
+
+            smsList.push(fancyEl);
+            smsList.push(<Divider key={addr + "_div"} inset={true} />);
         }
         return smsList;
     }
 
     handleSmsListClick(smsList) {
-        this.setState({...this.state, currentSmsThread: smsList});
+        this.setState({...this.state, currentSmsThread: smsList, showInput: true});
     }
 
     onNewSms(sms) {

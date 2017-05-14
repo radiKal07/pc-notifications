@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { colors } from '../utils/Stylesheet.js';
 
 export class ChatBubble extends Component {
     constructor(props) {
@@ -28,15 +29,15 @@ export class ChatBubble extends Component {
 
 const style = {
     right: {
-        backgroundColor: 'white',
+        backgroundColor: '#FFFFFF',
         float: 'right',
         alignSelf: 'flex-end',
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
-        marginRight: '10px'
+        marginRight: '10px',
     },
     left: {
-        backgroundColor: 'green',
+        backgroundColor: colors.lightPrimary,
         float: 'left',
         marginLeft: '10px'
     },
@@ -45,6 +46,7 @@ const style = {
         padding: '15px',
         clear: 'both',
         borderRadius: '30px',
-        marginTop: '4px'
+        marginTop: '4px',
+        maxWidth: '50%'
     }
 }
