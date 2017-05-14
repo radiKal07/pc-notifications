@@ -35,6 +35,10 @@ function createWindow() {
                 win.webContents.send('sms_list_response', smsList);
             });
 
+            server.setOnNewSmsReceived((sms) => {
+                win.webContents.send('new_sms', sms);
+            });
+
             ipcMain.on('retrieve_port', async (event, arg) => {
                 let port = await server.getPort();
                 event.sender.send('port_found', port);
@@ -47,8 +51,10 @@ function createWindow() {
 
             ipcMain.on('send_sms', async (event, sms) => {
                 console.log('send_sms', sms);
-                server.sendSms(sms);
-                //win.webContents.send('sms_list_response', smsList);
+                server.sendSms(sms, (response) => {
+                    console.log('send back: ', response);
+                    event.sender.send('send_sms_response', response);
+                });
             });
 
             server.startServer();

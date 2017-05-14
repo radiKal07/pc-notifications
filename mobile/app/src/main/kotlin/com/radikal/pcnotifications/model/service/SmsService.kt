@@ -7,4 +7,5 @@ import com.radikal.pcnotifications.model.domain.Sms
  */
 interface SmsService {
     fun getAllThreads(): Map<String, List<Sms>>
+    fun sendSms(sms: Sms)
 }

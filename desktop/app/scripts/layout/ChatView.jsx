@@ -4,6 +4,9 @@ import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 var {ipcRenderer} = window.require('electron');  // import it from window due to collision with browserify
 
+// use this to add proper keys to messages even if the same message is sent multiple times
+let gIndex = 0;
+
 export class ChatView extends Component {
     constructor(props) {
         super(props);
@@ -16,8 +19,26 @@ export class ChatView extends Component {
         this.scrollToBottom = this.scrollToBottom.bind(this);
         this.sendSms = this.sendSms.bind(this);
         this.handleTextFieldChange = this.handleTextFieldChange.bind(this);
+        this.generateUi = this.generateUi.bind(this);
 
-        this.generateChatBubbles(this.state.smsThread);
+        document.addEventListener("keydown", (event) => {
+            if (event.keyCode == 13) {
+                this.sendSms();
+            }
+        });
+
+        ipcRenderer.on('send_sms_response', (event, response) => {
+            if (response == 'OK') {
+                console.log('send_sms_response - OK');
+                let addrToSend = this.state.smsThread[0].contact;
+                let sms = {message: this.state.smsMessage, contact: addrToSend, type: 0, date: new Date()}
+
+                this.props.onNewSms(sms);
+                this.setState({...this.state, smsMessage: ''});
+            } else {
+                console.log('send_sms_response - ERROR');
+            }
+        });
     }
 
     componentWillReceiveProps(nextProps) {
@@ -38,7 +59,16 @@ export class ChatView extends Component {
         );
     }
 
+    componentDidMount() {
+        this.generateUi();
+    }
+
     componentDidUpdate() {
+        this.generateUi();
+    }
+
+    generateUi() {
+        this.generateChatBubbles(this.state.smsThread);
         this.scrollToBottom();
     }
 
@@ -54,7 +84,6 @@ export class ChatView extends Component {
             return;
         }
 
-
         let chatBubbles = [];
         let index = 0;
         let thread = this.getSmsThread(props.smsThread);
@@ -62,7 +91,7 @@ export class ChatView extends Component {
             let sms = thread[index++];
             chatBubbles.push(<ChatBubble key={sms.message + index} message={sms.message} msgType={sms.type}/>);
         }
-        this.setState({...this.state, chatBubbles});
+        this.setState({...this.state, smsThread: props.smsThread, chatBubbles});
     }
 
     scrollToBottom() {
@@ -73,10 +102,13 @@ export class ChatView extends Component {
     }
 
     sendSms() {
-        let addrToSend = this.state.smsThread[0].address;
-        let sms = {message: this.state.smsMessage, address: addrToSend}
+        if (this.state.smsMessage == null || this.state.smsMessage == undefined || this.state.smsMessage === '' || this.state.smsMessage === "") {
+            return;
+        }
+        let addrToSend = this.state.smsThread[0].contact;
+        let sms = {message: this.state.smsMessage, contact: addrToSend}
+
         ipcRenderer.send('send_sms', sms);
-        this.setState({...this.state, smsMessage: ''});
     }
 
     handleTextFieldChange(event) {

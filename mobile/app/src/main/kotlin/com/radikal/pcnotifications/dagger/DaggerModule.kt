@@ -16,7 +16,7 @@ import com.radikal.pcnotifications.model.service.impl.*
 import com.radikal.pcnotifications.model.validators.Validator
 import com.radikal.pcnotifications.model.validators.impl.PortValidator
 import com.radikal.pcnotifications.presenter.PairingPresenter
-import com.radikal.pcnotifications.services.util.SmsIdentifier
+import com.radikal.pcnotifications.listeners.util.SmsIdentifier
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -121,9 +121,10 @@ class DaggerModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun smsService(smsDao: SmsDao): SmsService {
+    fun smsService(smsDao: SmsDao, application: Application): SmsService {
         val smsService = SmsServiceImpl()
         smsService.smsDao = smsDao
+        smsService.context = application
         return smsService
     }
 

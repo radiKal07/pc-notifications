@@ -84,15 +84,19 @@ export class Server {
             }
         });
 
-        this.socket.on('notification_posted', function (data) {
+        this.socket.on('notification_posted', (data) => {
             let notification = JSON.parse(data);
             console.log('received notification: ', data);
             
-            // TODO extract notification
             notifier.notify({
                 'title': notification.title,
                 'message': notification.text
             });
+        });
+
+        this.socket.on('new_sms', (smsJsonAsString) => {
+            console.log('new_sms - ', smsJsonAsString);
+            this.onNewSmsReceived(JSON.parse(smsJsonAsString));
         });
     }
 
@@ -114,6 +118,10 @@ export class Server {
         this.onSmsListRecevied = callback;
     }
 
+    setOnNewSmsReceived(callback) {
+        this.onNewSmsReceived = callback;
+    }
+
     getSmsList() {
         console.log('get_all_sms');
         this.socket.emit('get_all_sms', async (smsList) => {
@@ -121,9 +129,10 @@ export class Server {
         });
     }
 
-    sendSms(sms) {
-        this.socket.emit('send_sms', JSON.stringify(sms), (answer) => {
-             console.log('answer - ', answer);
+    sendSms(sms, callback) {
+        this.socket.emit('send_sms', JSON.stringify(sms), (response) => {
+             console.log('send_sms - response - ', response);
+             callback(response);
         });
     }
 }

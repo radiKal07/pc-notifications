@@ -1,4 +1,4 @@
-package com.radikal.pcnotifications.services.util
+package com.radikal.pcnotifications.listeners.util
 
 import android.content.Context
 import android.provider.Settings

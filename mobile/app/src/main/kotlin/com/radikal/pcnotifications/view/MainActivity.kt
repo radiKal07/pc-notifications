@@ -15,9 +15,10 @@ import com.radikal.pcnotifications.R
 import com.radikal.pcnotifications.R.id.my_toolbar
 import com.radikal.pcnotifications.contracts.PairingContract
 import com.radikal.pcnotifications.exceptions.ServerDetailsNotFoundException
+import com.radikal.pcnotifications.listeners.SentSmsStatusListener
 import com.radikal.pcnotifications.model.domain.ServerDetails
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
-import com.radikal.pcnotifications.services.ServerWakeListener
+import com.radikal.pcnotifications.listeners.ServerWakeListener
 import com.radikal.pcnotifications.utils.snackbar
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_main.drawerlayout as drawerLayout

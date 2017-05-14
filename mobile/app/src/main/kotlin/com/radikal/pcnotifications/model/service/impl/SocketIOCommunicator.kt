@@ -8,7 +8,6 @@ import com.radikal.pcnotifications.model.domain.Sms
 import com.radikal.pcnotifications.model.service.DataSerializer
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
-import com.radikal.pcnotifications.model.persistence.SmsDao
 import com.radikal.pcnotifications.model.service.SmsService
 import io.socket.client.Ack
 import io.socket.client.IO
@@ -22,7 +21,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
     private val TAG = javaClass.simpleName
 
     private val NOTIFICATION_POSTED_EVENT = "notification_posted"
-    private val SMS_POSTED_EVENT = "sms_posted"
+    private val NEW_SMS_EVENT = "new_sms"
     private val SEND_SMS_EVENT = "send_sms"
     private val GET_ALL_SMS_EVENT = "get_all_sms"
     private val SERVER_DISCONNECTED = "server_disconnected"
@@ -70,15 +69,12 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
         socket!!.on(SEND_SMS_EVENT) {
             Log.v(TAG, SEND_SMS_EVENT)
-            if (it[0] != null && it.isNotEmpty() && it[0] is String) {
+            if (it.size >= 2 && it[0] is String && it[1] is Ack) {
                 val smsJson = it[0]
+                val ackResp = it[1] as Ack
                 val sms = dataSerializer.deserialize(smsJson.toString(), Sms::class.java)
-                // TODO send sms to contact
-                // "it" should contain the message and the contact
-                Log.v(TAG, sms.toString())
-            }
-            if (it.size >= 2 && it[1] != null && it[1] is Ack) {
-                (it[1] as Ack).call("OK")
+                smsService.sendSms(sms)
+                ackResp.call("OK")
             }
         }
 
@@ -121,7 +117,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
             Log.v(TAG, "Socket not connected")
             return
         }
-        socket?.emit(SMS_POSTED_EVENT, dataSerializer.serialize(sms))
+        socket?.emit(NEW_SMS_EVENT, dataSerializer.serialize(sms))
     }
 
     override fun isConnected(): Boolean {
@@ -135,5 +131,4 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
         return connected
     }
-
 }

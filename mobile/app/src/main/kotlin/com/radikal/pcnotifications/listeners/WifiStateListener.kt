@@ -1,4 +1,4 @@
-package com.radikal.pcnotifications.services
+package com.radikal.pcnotifications.listeners
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -14,7 +14,8 @@ import javax.inject.Inject
  * Created by tudor on 26.02.2017.
  */
 class WifiStateListener : BroadcastReceiver() {
-    val TAG = javaClass.simpleName
+    val TAG: String = javaClass.simpleName
+
     @Inject
     lateinit var wifiManager: WifiManager
 

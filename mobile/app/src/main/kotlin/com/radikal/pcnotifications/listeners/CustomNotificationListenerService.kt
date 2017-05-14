@@ -1,4 +1,4 @@
-package com.radikal.pcnotifications.services
+package com.radikal.pcnotifications.listeners
 
 import android.content.Intent
 import android.os.IBinder
@@ -8,9 +8,8 @@ import android.util.Log
 import com.radikal.pcnotifications.MainApplication
 import com.radikal.pcnotifications.exceptions.DeviceNotConnectedException
 import com.radikal.pcnotifications.model.domain.Notification
-import com.radikal.pcnotifications.model.domain.Sms
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
-import com.radikal.pcnotifications.services.util.SmsIdentifier
+import com.radikal.pcnotifications.listeners.util.SmsIdentifier
 import org.apache.commons.lang3.StringUtils
 import javax.inject.Inject
 
@@ -68,7 +67,8 @@ class CustomNotificationListenerService : NotificationListenerService() {
             Log.v(TAG, "notification is SMS")
             // because some SMS app may block the broadcast of SMSs we have to get them manually from the notifications
             //val sms = Sms(title, extras.getString("android.bigText") ?: "")
-            //deviceCommunicator.postSms(sms)
+
+            //deviceCommunicator.postSms(contact, message)
         }
     }
 }

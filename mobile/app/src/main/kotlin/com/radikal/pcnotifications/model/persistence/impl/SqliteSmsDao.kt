@@ -18,6 +18,8 @@ import com.github.tamir7.contacts.Contacts
  * Created by tudor on 25.04.2017.
  */
 class SqliteSmsDao @Inject constructor() : SmsDao {
+    val TAG: String = javaClass.simpleName
+
     val smsInboxUri: Uri = Uri.parse("content://sms/inbox")
     val smsSentUri: Uri = Uri.parse("content://sms/sent")
 
@@ -48,23 +50,34 @@ class SqliteSmsDao @Inject constructor() : SmsDao {
         var smsList: MutableList<Sms> = ArrayList()
         val cursor = contentResolver.query(uri, null, null, null, null)
 
+        val allContacts = Contacts.getQuery().find()
+
         while (cursor.moveToNext()) {
-            var sender = cursor.getString(cursor.getColumnIndex("address"))
+            var sender = cursor.getString(cursor.getColumnIndex("address")).replace(" ", "")
 
-            val q = Contacts.getQuery()
-            q.whereEqualTo(Contact.Field.PhoneNumber, sender)
-            val contacts = q.find()
+            val contactsByPhoneNumber = Contacts.getQuery()
+            contactsByPhoneNumber.whereEqualTo(Contact.Field.PhoneNumber, sender)
+            val contacts = contactsByPhoneNumber.find()
 
+            var displayName = sender
             if (contacts.size == 0) {
-                Log.d("SqliteSmsDai", "not found for: " + sender)
-                continue
+                Log.e(TAG, "Contact not found for number: " + sender)
+                allContacts.forEach {
+                    val contact = it
+                    it.phoneNumbers.forEach {
+                        if (it.normalizedNumber?.replace(" ", "") == sender || it.number?.replace(" ", "") == sender) {
+                            Log.v(TAG, "Found contact for number $sender and display name: ${contact.displayName}")
+                            displayName = contact.displayName
+                        }
+                    }
+                }
+            } else {
+                displayName = contacts[0].displayName
             }
-
-            sender = contacts[0].displayName
 
             var message = cursor.getString(cursor.getColumnIndex("body"))
             var date = cursor.getString(cursor.getColumnIndex("date"))
-            smsList.add(Sms(sender, message, Date(date.toLong()), smsType))
+            smsList.add(Sms(com.radikal.pcnotifications.model.domain.Contact(displayName, sender), message, Date(date.toLong()), smsType))
         }
 
         cursor.close()
