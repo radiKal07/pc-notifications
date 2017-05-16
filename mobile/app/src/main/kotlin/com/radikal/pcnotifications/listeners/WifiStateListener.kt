@@ -34,6 +34,7 @@ class WifiStateListener : BroadcastReceiver() {
             }
         } else {
             Log.v(TAG, "Wi-Fi disabled")
+            deviceCommunicator.disconnect()
         }
     }
 }

@@ -2,7 +2,6 @@ package com.radikal.pcnotifications.view
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
@@ -15,10 +14,8 @@ import com.radikal.pcnotifications.R
 import com.radikal.pcnotifications.R.id.my_toolbar
 import com.radikal.pcnotifications.contracts.PairingContract
 import com.radikal.pcnotifications.exceptions.ServerDetailsNotFoundException
-import com.radikal.pcnotifications.listeners.SentSmsStatusListener
 import com.radikal.pcnotifications.model.domain.ServerDetails
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
-import com.radikal.pcnotifications.listeners.ServerWakeListener
 import com.radikal.pcnotifications.utils.snackbar
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_main.drawerlayout as drawerLayout
@@ -74,9 +71,6 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
             serverDetailsDao.delete()
             addDeviceFab.visibility = View.VISIBLE
         }
-
-        val serverWakeIntent = Intent(this, ServerWakeListener::class.java)
-        startService(serverWakeIntent)
     }
 
     private fun showServerStatus() {

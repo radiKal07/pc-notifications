@@ -63,7 +63,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
                     Log.v(TAG, el.toString())
                 }
             }
-            socket!!.close()
+            socket?.close()
             socket = null
         }
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { appStyleSheet } from '../utils/Stylesheet.js';
-import { Sidebar } from './Sidebar.jsx';
+import { Sidebar, layouts } from './Sidebar.jsx';
 
 export class HomeView extends Component {
     constructor(props) {
@@ -11,7 +11,7 @@ export class HomeView extends Component {
         return(
             <div>
                 <div style={{...appStyleSheet.staticFixed, ...appStyleSheet.fullheight}}>
-                    <Sidebar onSwitchLayout={(newLayout) => {this.props.onSwitchLayout(newLayout)}}/>
+                    <Sidebar layout={layouts.HOME} onSwitchLayout={(newLayout) => {this.props.onSwitchLayout(newLayout)}}/>
                 </div>
                 <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.fullContent, ...appStyleSheet.fullheight}}>

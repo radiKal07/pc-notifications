@@ -98,6 +98,17 @@ export class Server {
             console.log('new_sms - ', smsJsonAsString);
             this.onNewSmsReceived(JSON.parse(smsJsonAsString));
         });
+
+        this.socket.on('disconnect', () => {
+            console.log('client disconnected');
+            this.socket.disconnect(true);
+        });
+
+        this.socket.on('disconnecting', () => {
+            this.socket.close();
+            console.log('client disconnecting');
+            this.socket.disconnect(true);
+        });
     }
 
     async getPort() {

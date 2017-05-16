@@ -1,7 +1,8 @@
 package com.radikal.pcnotifications.listeners
 
-import android.app.IntentService
+import android.app.Service
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.IBinder
 import android.util.Log
 import com.radikal.pcnotifications.MainApplication
@@ -17,15 +18,11 @@ import javax.inject.Inject
 /**
  * Created by tudor on 05.03.2017.
  */
-class ServerWakeListener : IntentService("ServerWakeListener") {
+class ServerWakeListener : Service() {
+    private val TAG = javaClass.simpleName
+
     @Inject
     lateinit var deviceCommunicator: DeviceCommunicator
-
-    override fun onHandleIntent(intent: Intent?) {
-        startListener()
-    }
-
-    private val TAG = javaClass.simpleName
 
     @Inject
     lateinit var serverDetailsDao: ServerDetailsDao
@@ -41,40 +38,57 @@ class ServerWakeListener : IntentService("ServerWakeListener") {
         super.onCreate()
     }
 
-    fun startListener() {
-        Log.v(TAG, "UDP Listener started")
-        val serverDetails: ServerDetails
-        try {
-            serverDetails = serverDetailsDao.retrieve()
-        } catch (e: ServerDetailsNotFoundException) {
-            Log.e(TAG, "Can't find port", e)
-            return
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        StartListenerAsyncTask(serverDetailsDao, deviceCommunicator).execute()
+        return START_STICKY
+    }
+
+    class StartListenerAsyncTask(serverDetailsDao: ServerDetailsDao, deviceCommunicator: DeviceCommunicator) : AsyncTask<Void, Void, Void>() {
+        private val TAG = javaClass.simpleName
+
+        var serverDetailsDao: ServerDetailsDao? = serverDetailsDao
+        var deviceCommunicator: DeviceCommunicator? = deviceCommunicator
+
+        override fun doInBackground(vararg params: Void?): Void? {
+            startListener()
+            return null
         }
 
-        val port = serverDetails.port
-        val serverSocket = DatagramSocket(port)
-        val receiveData = ByteArray(8)
-
-
-        val receivePacket = DatagramPacket(receiveData,
-                receiveData.size)
-
-        while (true) {
-            Log.v(TAG, "Listening...")
-            serverSocket.receive(receivePacket)
-            val sentence = String(receivePacket.data, 0,
-                    receivePacket.length)
-            Log.v(TAG, "UDP received: $sentence")
-            if ("wake" == sentence) {
-                deviceCommunicator.connect()
+        private fun startListener() {
+            Log.v(TAG, "UDP Listener started")
+            val serverDetails: ServerDetails
+            try {
+                serverDetails = serverDetailsDao!!.retrieve()
+            } catch (e: ServerDetailsNotFoundException) {
+                Log.e(TAG, "Can't find port", e)
+                return
             }
-            // now send acknowledgement packet back to sender
-            val IPAddress = receivePacket.address
-            val sendString = "connecting"
-            val sendData = sendString.toByteArray(charset("UTF-8"))
-            val sendPacket = DatagramPacket(sendData, sendData.size,
-                    IPAddress, receivePacket.port)
-            serverSocket.send(sendPacket)
+
+            val port = serverDetails.port
+            val serverSocket = DatagramSocket(port)
+            val receiveData = ByteArray(8)
+
+
+            val receivePacket = DatagramPacket(receiveData,
+                    receiveData.size)
+
+            while (true) {
+                Log.v(TAG, "Listening...")
+                serverSocket.receive(receivePacket)
+                val sentence = String(receivePacket.data, 0,
+                        receivePacket.length)
+                Log.v(TAG, "UDP received: $sentence")
+                if ("wake" == sentence) {
+                    deviceCommunicator!!.connect()
+                }
+                // now send acknowledgement packet back to sender
+                val IPAddress = receivePacket.address
+                val sendString = "connecting"
+                val sendData = sendString.toByteArray(charset("UTF-8"))
+                val sendPacket = DatagramPacket(sendData, sendData.size,
+                        IPAddress, receivePacket.port)
+                serverSocket.send(sendPacket)
+            }
         }
     }
 }

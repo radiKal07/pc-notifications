@@ -4,8 +4,9 @@ import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import FontIcon from 'material-ui/FontIcon';
+import CircularProgress from 'material-ui/CircularProgress';
 import { appStyleSheet } from '../utils/Stylesheet.js';
-import { Sidebar } from './Sidebar.jsx';
+import { Sidebar, layouts } from './Sidebar.jsx';
 import { ChatView } from './ChatView.jsx';
 import { colors } from '../utils/Stylesheet.js';
 var {ipcRenderer} = window.require('electron');  // import it from window due to collision with browserify
@@ -49,7 +50,7 @@ SelectableList = wrapState(SelectableList);
 export class SmsView extends Component {
     constructor(props) {
         super(props);
-        this.state = {currentSmsThread: [], showInput: false};
+        this.state = {currentSmsThread: [], showInput: false, loading: true};
     }
 
     componentWillMount() {
@@ -63,17 +64,35 @@ export class SmsView extends Component {
         return(
             <div>
                 <div style={{...appStyleSheet.staticFixed, ...appStyleSheet.fullheight}}>
-                    <Sidebar onSwitchLayout={(newLayout) => {this.props.onSwitchLayout(newLayout)}}/>
+                    <Sidebar layout={layouts.SMS} onSwitchLayout={(newLayout) => {this.props.onSwitchLayout(newLayout)}}/>
                 </div>
                 <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.menu, ...appStyleSheet.fullheight}}>
-                        <SelectableList defaultValue={1}>
-                            <Subheader>Latest messages</Subheader>
-                            {this.generateSmsList(this.state.smsThreads)}
-                        </SelectableList>
+                        {
+                            !this.state.loading
+                            &&
+                            <SelectableList defaultValue={1}>
+                                <Subheader>Latest messages</Subheader>
+                                {this.generateSmsList(this.state.smsThreads)}
+                            </SelectableList>
+                        }
+                        {
+                            this.state.loading
+                            &&
+                            <CircularProgress style={style.progress} color={colors.accent} />
+                        }
                     </div>
                     <div style={{...appStyleSheet.content, ...appStyleSheet.fullheight}}>
-                        <ChatView smsThread={this.state.currentSmsThread} showInput={this.state.showInput} onNewSms={this.onNewSms}/>
+                        {
+                            !this.state.loading
+                            &&
+                            <ChatView smsThread={this.state.currentSmsThread} showInput={this.state.showInput} onNewSms={this.onNewSms}/>
+                        }
+                        {
+                            this.state.loading
+                            &&
+                            <CircularProgress style={style.progress} color={colors.accent} size={80}/>
+                        }
                     </div>
                 </div>
             </div>
@@ -95,7 +114,7 @@ export class SmsView extends Component {
 
     handleSmsList(smsThreads) {
         let smsThreadsJson = JSON.parse(smsThreads);
-        this.setState({...this.state, smsThreads: smsThreadsJson});
+        this.setState({...this.state, smsThreads: smsThreadsJson, loading: false});
         this.handleSmsListClick(smsThreadsJson[Object.keys(smsThreadsJson)[0]]);
     }
 
@@ -147,3 +166,14 @@ export class SmsView extends Component {
         this.setState({...this.state, smsThreads});
     }
 }
+
+const style = {
+    progress: {
+        position: 'relative',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        display: 'flex',
+        justifyContent: 'center',
+        width: '100%'
+    }
+};
