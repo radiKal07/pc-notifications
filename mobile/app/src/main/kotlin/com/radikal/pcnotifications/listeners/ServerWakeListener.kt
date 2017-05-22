@@ -6,6 +6,7 @@ import android.os.AsyncTask
 import android.os.IBinder
 import android.util.Log
 import com.radikal.pcnotifications.MainApplication
+import com.radikal.pcnotifications.exceptions.DeviceNotConnectedException
 import com.radikal.pcnotifications.exceptions.ServerDetailsNotFoundException
 import com.radikal.pcnotifications.model.domain.ServerDetails
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
@@ -79,7 +80,12 @@ class ServerWakeListener : Service() {
                         receivePacket.length)
                 Log.v(TAG, "UDP received: $sentence")
                 if ("wake" == sentence) {
-                    deviceCommunicator!!.connect()
+                    try {
+                        deviceCommunicator!!.connect()
+                    } catch (exception: DeviceNotConnectedException) {
+                        Log.e(TAG, exception.message, exception)
+                    }
+
                 }
                 // now send acknowledgement packet back to sender
                 val IPAddress = receivePacket.address

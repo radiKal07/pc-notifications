@@ -13,6 +13,6 @@ interface PairingContract {
     }
 
     interface Presenter : BasePresenter<PairingContract.View> {
-        fun onPortSubmitted(port: String?)
+        fun onServerDetails(serverDetails: ServerDetails)
     }
 }

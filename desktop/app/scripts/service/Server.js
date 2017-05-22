@@ -101,24 +101,25 @@ export class Server {
 
         this.socket.on('disconnect', () => {
             console.log('client disconnected');
-            this.socket.disconnect(true);
+            //this.socket.disconnect(true);
         });
 
         this.socket.on('disconnecting', () => {
-            this.socket.close();
             console.log('client disconnecting');
-            this.socket.disconnect(true);
+            //this.socket.disconnect(true);
         });
     }
 
-    async getPort() {
+    async getQrCodeValue() {
         let port = await this.settingsDao.getPort();
         if (!port || port != this.server.address().port) {
             console.log('port is not setted');
             port = this.server.address().port;
             await this.settingsDao.savePort(port);
         }
-        return port;
+        let ip = this.server.address().address;
+        let hostname = os.hostname();
+        return hostname + "," + ip + "," + port;
     }
 
     setOnClientConnected(callback) {

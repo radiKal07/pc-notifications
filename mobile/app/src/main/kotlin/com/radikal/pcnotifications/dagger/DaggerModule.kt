@@ -48,13 +48,6 @@ class DaggerModule(val application: Application) {
 
     @Provides
     @Singleton
-    @Named("socketIONetworkDiscovery")
-    fun networkDiscovery(wifiManager: WifiManager): NetworkDiscovery {
-        return SocketIONetworkDiscovery(wifiManager)
-    }
-
-    @Provides
-    @Singleton
     @Named("portValidator")
     fun portValidator(): Validator<String?> {
         return PortValidator()
@@ -62,21 +55,21 @@ class DaggerModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun pairingPresenter(@Named("socketIONetworkDiscovery") networkDiscovery: NetworkDiscovery, serverDetailsDao: ServerDetailsDao): PairingContract.Presenter {
+    fun pairingPresenter(deviceCommunicator: DeviceCommunicator): PairingContract.Presenter {
         val pairingPresenter = PairingPresenter()
-        pairingPresenter.networkDiscovery = networkDiscovery
         pairingPresenter.portValidator = portValidator()
-        pairingPresenter.serverDetailsDao = serverDetailsDao
+        pairingPresenter.deviceCommunicator = deviceCommunicator
         return pairingPresenter
     }
 
     @Provides
     @Singleton
-    fun deviceCommunicator(serverDetailsDao: ServerDetailsDao, dataSerializer: DataSerializer, smsService: SmsService): DeviceCommunicator {
+    fun deviceCommunicator(wifiManager: WifiManager, serverDetailsDao: ServerDetailsDao, dataSerializer: DataSerializer, smsService: SmsService): DeviceCommunicator {
         val socketIOCommunicator = SocketIOCommunicator()
         socketIOCommunicator.serverDetailsDao = serverDetailsDao
         socketIOCommunicator.dataSerializer = dataSerializer
         socketIOCommunicator.smsService = smsService
+        socketIOCommunicator.wifiManager = wifiManager
         return socketIOCommunicator
     }
 

@@ -1,12 +1,13 @@
 package com.radikal.pcnotifications.view
 
-import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
 import android.widget.RelativeLayout
 import com.mxn.soul.flowingdrawer_core.FlowingDrawer
 import com.radikal.pcnotifications.MainApplication
@@ -39,6 +40,20 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
 
     var dialog: DialogInterface? = null
 
+    companion object {
+        val HOSTNAME_TAG: String = "hostname"
+        val IP_TAG: String = "ip"
+        val PORT_TAG: String = "port"
+
+        fun startActivity(context: Context, serverDetails: ServerDetails) {
+            val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra(HOSTNAME_TAG, serverDetails.hostname)
+            intent.putExtra(IP_TAG, serverDetails.ip)
+            intent.putExtra(PORT_TAG, serverDetails.port)
+            context.startActivity(intent)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -52,10 +67,8 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
         ((container.layoutParams) as RelativeLayout.LayoutParams).addRule(RelativeLayout.BELOW, my_toolbar)
 
         addDeviceFab.setOnClickListener {
-            addDeviceFab.visibility = View.GONE
-            findServerProgressBar.visibility = View.VISIBLE
-            findServerTextView.visibility = View.VISIBLE
-            showPairingCodeDialog()
+            val intent = Intent(applicationContext, QrCodeScannerActivity::class.java)
+            startActivity(intent)
         }
 
         try {
@@ -71,36 +84,21 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
             serverDetailsDao.delete()
             addDeviceFab.visibility = View.VISIBLE
         }
+
+        val hostname: String? = intent?.extras?.get(HOSTNAME_TAG) as String?
+        val ip: String? = intent?.extras?.get(IP_TAG) as String?
+        val port: Int? = intent?.extras?.get(PORT_TAG) as Int?
+
+        if (hostname != null && ip != null && port != null) {
+            pairingPresenter.onServerDetails(ServerDetails(hostname, ip, port))
+            Log.d(TAG, "ip and port: $ip:$port ($hostname)")
+        }
     }
 
     private fun showServerStatus() {
         val retrieve = serverDetailsDao.retrieve()
-        serverStatusTextView.setText("Connected to: ${retrieve.hostname} (${retrieve.ip}:${retrieve.port})")
+        serverStatusTextView.text = "Connected to: ${retrieve.hostname} (${retrieve.ip}:${retrieve.port})"
         serverStatusTextView.visibility = View.VISIBLE
-    }
-
-    fun showPairingCodeDialog() {
-        val builder = AlertDialog.Builder(this)
-        val view = this.layoutInflater.inflate(R.layout.port_input_dialog, null)
-        builder.setView(view)
-                .setTitle("Pairing")
-                .setMessage("Please input pairing code")
-                .setCancelable(false)
-                .setPositiveButton("OK") {
-                    dialog, which ->
-                    run {
-                        this.dialog = dialog
-                        val portEditText = view.findViewById(R.id.port_edit_text) as EditText?
-                        val portString = portEditText?.text?.toString()
-                        pairingPresenter.onPortSubmitted(portString)
-                    }
-                }.setNegativeButton("Cancel") {
-            dialog, which ->
-            hideServerSearch()
-            addDeviceFab.visibility = View.VISIBLE
-        }
-
-        builder.create().show()
     }
 
     override fun showMessage(message: String) {

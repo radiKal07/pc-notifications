@@ -1,9 +1,12 @@
 package com.radikal.pcnotifications.model.service.impl
 
+import android.net.wifi.WifiManager
+import android.text.format.Formatter
 import android.util.Log
 import com.radikal.pcnotifications.exceptions.DeviceNotConnectedException
 import com.radikal.pcnotifications.exceptions.ServerDetailsNotFoundException
 import com.radikal.pcnotifications.model.domain.Notification
+import com.radikal.pcnotifications.model.domain.ServerDetails
 import com.radikal.pcnotifications.model.domain.Sms
 import com.radikal.pcnotifications.model.service.DataSerializer
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
@@ -28,8 +31,6 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
     private val CONNECT_ERROR = "connect_error"
     private val CONNECT = "connect"
 
-    private var socket: Socket? = null
-
     @Inject
     lateinit var serverDetailsDao: ServerDetailsDao
 
@@ -38,6 +39,43 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
     @Inject
     lateinit var smsService: SmsService
+
+    @Inject
+    lateinit var wifiManager: WifiManager
+
+    private var socket: Socket? = null
+    private var errorListener: (() -> Unit)? = null
+
+    override fun connect(serverDetails: ServerDetails) {
+        if (isConnected()) {
+            return
+        }
+
+        serverDetailsDao.save(serverDetails)
+
+        try {
+            val (hostname, ip, port) = serverDetails
+            socket = IO.socket("http://$ip:$port")
+            IO.setDefaultHostnameVerifier { hostname, session ->
+                return@setDefaultHostnameVerifier true
+            }
+            Log.v(TAG, "Trying to connect to http://$ip:$port ($hostname)")
+        } catch (e: ServerDetailsNotFoundException) {
+            Log.e(TAG, "Failed to connect", e)
+            throw DeviceNotConnectedException("Failed to connect to device", e)
+        }
+
+        addSocketEvents()
+
+        val clientIp: String = Formatter.formatIpAddress(wifiManager.connectionInfo.ipAddress)
+
+        socket!!.connect()
+        socket!!.emit("server_discovery", clientIp, Ack {
+            if (socket!!.connected()) {
+                Log.v(TAG, "server_discovery succeeded")
+            }
+        })
+    }
 
     override fun connect() {
         if (isConnected()) {
@@ -56,6 +94,12 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
             throw DeviceNotConnectedException("Failed to connect to device", e)
         }
 
+        addSocketEvents()
+
+        socket!!.connect()
+    }
+
+    private fun addSocketEvents() {
         socket!!.on(CONNECT_ERROR) {
             Log.v(TAG, CONNECT_ERROR)
             if (it.isNotEmpty()) {
@@ -65,6 +109,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
             }
             socket?.close()
             socket = null
+            errorListener?.invoke()
         }
 
         socket!!.on(SEND_SMS_EVENT) {
@@ -93,8 +138,6 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
         socket!!.on(CONNECT) {
             Log.v(TAG, "Connected successfully")
         }
-
-        socket!!.connect()
     }
 
     override fun disconnect() {
@@ -130,5 +173,9 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
         }
 
         return connected
+    }
+
+    override fun setErrorListener(errorListener: () -> Unit) {
+        this.errorListener = errorListener
     }
 }

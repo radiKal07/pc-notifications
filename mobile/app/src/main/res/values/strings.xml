@@ -6,4 +6,5 @@
     <string name="finding_server">Finding server…</string>
     <string name="enter_pairing_code">Please enter pairing code</string>
     <string name="try_again">Try Again</string>
+    <string name="title_activity_qr_code_scanner">QrCodeScannerActivity</string>
 </resources>

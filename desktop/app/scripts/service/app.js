@@ -9,6 +9,7 @@ import {SettingsDao} from './SettingsDao.js'
 let win
 
 let settingsStore = datastore({filename: app.getPath('userData') + '/settings.json', autoload: true})
+console.log(app.getPath('userData') + '/settings.json');
 let settingsDao = new SettingsDao({settingsStore});
 let server = new Server(settingsDao);
 
@@ -39,9 +40,9 @@ function createWindow() {
                 win.webContents.send('new_sms', sms);
             });
 
-            ipcMain.on('retrieve_port', async (event, arg) => {
-                let port = await server.getPort();
-                event.sender.send('port_found', port);
+            ipcMain.on('retrieve_qrcode', async (event, arg) => {
+                let qrcode = await server.getQrCodeValue();
+                event.sender.send('qrcode_found', qrcode);
             });
 
             ipcMain.on('retrieve_sms', async (event, arg) => {

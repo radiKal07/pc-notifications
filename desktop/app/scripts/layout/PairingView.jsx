@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import QRCode from 'qrcode.react';
 import {CustomActionButton} from '../utils/CustomActionButton.jsx';
 import {appStyleSheet} from '../utils/Stylesheet.js';
 var {ipcRenderer} = window.require('electron');  // import it from window due to collision with browserify
@@ -9,15 +10,15 @@ var {ipcRenderer} = window.require('electron');  // import it from window due to
 export class PairingView extends Component {
     constructor(props) {
         super(props);
-        this.state = {pairDialogOpen: false, port: ''};
+        this.state = {pairDialogOpen: false, qrCodeValue: 'test'};
     }
 
     componentWillMount() {
         this.handlePairDevice = this.handlePairDevice.bind(this);
         this.handleClosePairDialog = this.handleClosePairDialog.bind(this);
 
-        ipcRenderer.on('port_found', (event, port) => {
-            this.setState({...this.state, port: port});
+        ipcRenderer.on('qrcode_found', (event, qrCodeValue) => {
+            this.setState({...this.state, qrCodeValue});
         });
 
         ipcRenderer.on('client_connected', (event) => {
@@ -52,7 +53,7 @@ export class PairingView extends Component {
                                 open={this.state.pairDialogOpen}
                                 onRequestClose={this.handleClosePairDialog}
                             >
-                            Open pairing mode on your phone and use this pairing code: {this.state.port}
+                            <QRCode value={this.state.qrCodeValue} />
                         </Dialog>
                     </div>
                 </div>
@@ -62,7 +63,7 @@ export class PairingView extends Component {
 
     handlePairDevice() {
         this.setState({...this.state, pairDialogOpen: true});
-        ipcRenderer.send('retrieve_port');
+        ipcRenderer.send('retrieve_qrcode');
     }
 
     handleClosePairDialog() {
