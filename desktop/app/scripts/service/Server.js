@@ -12,6 +12,7 @@ export class Server {
         this.onClientConnected = null;
         this.onSmsListRecevied = null;
         this.socket = null;
+        this.serverIp = null;
     }
 
     async startServer() {
@@ -27,19 +28,22 @@ export class Server {
             }
         });
 
-        let port = await this.settingsDao.getPort();
-        if (!port) {
-            port = 0;
+        let settings = await this.settingsDao.getSettings(ip.address());
+        let port = 0;
+        if (settings && settings.port) {
+            port = settings.port;
         }
 
-        this.server.listen(port, ip.address(), async () => {
+        this.serverIp = ip.address();
+
+        this.server.listen(port, this.serverIp, async () => {
             if (port == 0) {
                 port = this.server.address().port;
-                await this.settingsDao.savePort(port);
+                await this.settingsDao.savePort(this.serverIp, port);
             }
             console.log('Socket.IO listening (' + this.server.address().address + ':' + this.server.address().port + ')');
             
-            let clientIp = await this.settingsDao.getClientIp();
+            let clientIp = await this.settingsDao.getClientIp(this.serverIp);
             if (port && clientIp) {
                 this.sendWakeUpSignal(clientIp, port);
             }
@@ -77,7 +81,7 @@ export class Server {
     async addSocketEvents() {
         this.socket.on('server_discovery', async (clientIp, callback) => {
             console.log('Client trying to connect', clientIp);
-            await this.settingsDao.saveClientIp(clientIp);
+            await this.settingsDao.saveClientIp(this.serverIp, clientIp);
             callback(os.hostname());
             if (this.onClientConnected) {
                 this.onClientConnected();
@@ -111,11 +115,11 @@ export class Server {
     }
 
     async getQrCodeValue() {
-        let port = await this.settingsDao.getPort();
+        let port = await this.settingsDao.getPort(this.serverIp);
         if (!port || port != this.server.address().port) {
             console.log('port is not setted');
             port = this.server.address().port;
-            await this.settingsDao.savePort(port);
+            await this.settingsDao.savePort(this.serverIp, port);
         }
         let ip = this.server.address().address;
         let hostname = os.hostname();
