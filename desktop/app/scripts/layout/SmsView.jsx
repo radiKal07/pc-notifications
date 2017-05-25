@@ -8,6 +8,7 @@ import CircularProgress from 'material-ui/CircularProgress';
 import { appStyleSheet } from '../utils/Stylesheet.js';
 import { Sidebar, layouts } from './Sidebar.jsx';
 import { ChatView } from './ChatView.jsx';
+import { ContactSearch } from './ContactSearch.jsx';
 import { colors } from '../utils/Stylesheet.js';
 var {ipcRenderer} = window.require('electron');  // import it from window due to collision with browserify
 
@@ -68,6 +69,7 @@ export class SmsView extends Component {
                 </div>
                 <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.menu, ...appStyleSheet.fullheight}}>
+                        <ContactSearch contacts={this.state.contacts}/>
                         {
                             !this.state.loading
                             &&
@@ -109,7 +111,12 @@ export class SmsView extends Component {
             this.onNewSms(sms);
         });
 
+        ipcRenderer.on('contact_list_response', (event, contacts) => {
+            this.setState({...this.state, contacts});
+        });
+
         ipcRenderer.send('retrieve_sms');
+        ipcRenderer.send('retrieve_contacts');
     }
 
     handleSmsList(smsThreads) {

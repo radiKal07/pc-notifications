@@ -32,12 +32,16 @@ function createWindow() {
                 win.webContents.send('client_connected');
             }); 
 
-            server.setOnSmsListRecevied((smsList) => {
+            server.setOnSmsListReceived((smsList) => {
                 win.webContents.send('sms_list_response', smsList);
             });
 
             server.setOnNewSmsReceived((sms) => {
                 win.webContents.send('new_sms', sms);
+            });
+
+            server.setOnContactListReceived((contactList) => {
+                win.webContents.send('contact_list_response', JSON.parse(contactList));
             });
 
             ipcMain.on('retrieve_qrcode', async (event, arg) => {
@@ -56,6 +60,11 @@ function createWindow() {
                     console.log('send back: ', response);
                     event.sender.send('send_sms_response', response);
                 });
+            });
+
+            ipcMain.on('retrieve_contacts', async (event, arg) => {
+                console.log('ipcMain - retrieve_contacts');
+                server.getContactList();
             });
 
             server.startServer();

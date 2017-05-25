@@ -8,6 +8,7 @@ import com.radikal.pcnotifications.exceptions.ServerDetailsNotFoundException
 import com.radikal.pcnotifications.model.domain.Notification
 import com.radikal.pcnotifications.model.domain.ServerDetails
 import com.radikal.pcnotifications.model.domain.Sms
+import com.radikal.pcnotifications.model.persistence.ContactsDao
 import com.radikal.pcnotifications.model.service.DataSerializer
 import com.radikal.pcnotifications.model.service.DeviceCommunicator
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
@@ -27,6 +28,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
     private val NEW_SMS_EVENT = "new_sms"
     private val SEND_SMS_EVENT = "send_sms"
     private val GET_ALL_SMS_EVENT = "get_all_sms"
+    private val GET_ALL_CONTACTS_EVENT = "get_all_contacts"
     private val SERVER_DISCONNECTED = "server_disconnected"
     private val CONNECT_ERROR = "connect_error"
     private val CONNECT = "connect"
@@ -42,6 +44,9 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
     @Inject
     lateinit var wifiManager: WifiManager
+
+    @Inject
+    lateinit var contactsDao: ContactsDao
 
     private var socket: Socket? = null
     private var errorListener: (() -> Unit)? = null
@@ -127,6 +132,15 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
             Log.v(TAG, GET_ALL_SMS_EVENT)
             if (it[0] is Ack) {
                 (it[0] as Ack).call(dataSerializer.serialize(smsService.getAllThreads()))
+            }
+        }
+
+        socket!!.on(GET_ALL_CONTACTS_EVENT) {
+            Log.v(TAG, GET_ALL_CONTACTS_EVENT)
+            if (it[0] is Ack) {
+                val serialize = dataSerializer.serialize(contactsDao.getAll())
+                Log.v(TAG, "Sending contacts: $serialize")
+                (it[0] as Ack).call(serialize)
             }
         }
 

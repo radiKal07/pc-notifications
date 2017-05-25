@@ -10,7 +10,8 @@ export class Server {
         this.settingsDao = settingsDao;
         this.server = null;
         this.onClientConnected = null;
-        this.onSmsListRecevied = null;
+        this.onSmsListReceived = null;
+        this.onContactListReceived = null;
         this.socket = null;
         this.serverIp = null;
     }
@@ -31,6 +32,7 @@ export class Server {
         let settings = await this.settingsDao.getSettings(ip.address());
         let port = 0;
         if (settings && settings.port) {
+            console.log('using existing port ', settings.port);
             port = settings.port;
         }
 
@@ -130,8 +132,12 @@ export class Server {
         this.onClientConnected = callback;
     }
 
-    setOnSmsListRecevied(callback) {
-        this.onSmsListRecevied = callback;
+    setOnSmsListReceived(callback) {
+        this.onSmsListReceived = callback;
+    }
+
+    setOnContactListReceived(callback) {
+        this.onContactListReceived = callback;
     }
 
     setOnNewSmsReceived(callback) {
@@ -141,7 +147,7 @@ export class Server {
     getSmsList() {
         console.log('get_all_sms');
         this.socket.emit('get_all_sms', async (smsList) => {
-            this.onSmsListRecevied(smsList);
+            this.onSmsListReceived(smsList);
         });
     }
 
@@ -149,6 +155,14 @@ export class Server {
         this.socket.emit('send_sms', JSON.stringify(sms), (response) => {
              console.log('send_sms - response - ', response);
              callback(response);
+        });
+    }
+
+    getContactList() {
+        console.log('get_all_contacts');
+        this.socket.emit('get_all_contacts', async (contactList) => {
+            console.log('received contacts ');
+            this.onContactListReceived(contactList);
         });
     }
 }

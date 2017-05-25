@@ -33,6 +33,7 @@
     "node-notifier": "^5.0.2",
     "qrcode.react": "^0.7.1",
     "react": "^15.5.4",
+    "react-autosuggest": "^9.0.1",
     "react-dom": "^15.4.1",
     "react-tap-event-plugin": "^2.0.1",
     "socket.io": "^1.7.3"

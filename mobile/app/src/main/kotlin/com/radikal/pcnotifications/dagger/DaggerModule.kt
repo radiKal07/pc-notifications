@@ -17,6 +17,8 @@ import com.radikal.pcnotifications.model.validators.Validator
 import com.radikal.pcnotifications.model.validators.impl.PortValidator
 import com.radikal.pcnotifications.presenter.PairingPresenter
 import com.radikal.pcnotifications.listeners.util.SmsIdentifier
+import com.radikal.pcnotifications.model.persistence.ContactsDao
+import com.radikal.pcnotifications.model.persistence.impl.ContactsDaoImpl
 import dagger.Module
 import dagger.Provides
 import javax.inject.Named
@@ -64,12 +66,13 @@ class DaggerModule(val application: Application) {
 
     @Provides
     @Singleton
-    fun deviceCommunicator(wifiManager: WifiManager, serverDetailsDao: ServerDetailsDao, dataSerializer: DataSerializer, smsService: SmsService): DeviceCommunicator {
+    fun deviceCommunicator(wifiManager: WifiManager, serverDetailsDao: ServerDetailsDao, dataSerializer: DataSerializer, smsService: SmsService, contactsDao: ContactsDao): DeviceCommunicator {
         val socketIOCommunicator = SocketIOCommunicator()
         socketIOCommunicator.serverDetailsDao = serverDetailsDao
         socketIOCommunicator.dataSerializer = dataSerializer
         socketIOCommunicator.smsService = smsService
         socketIOCommunicator.wifiManager = wifiManager
+        socketIOCommunicator.contactsDao = contactsDao
         return socketIOCommunicator
     }
 
@@ -125,5 +128,11 @@ class DaggerModule(val application: Application) {
     @Singleton
     fun telephonyManager(): TelephonyManager {
         return application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+    }
+
+    @Provides
+    @Singleton
+    fun contactsDao(): ContactsDao {
+        return ContactsDaoImpl()
     }
 }

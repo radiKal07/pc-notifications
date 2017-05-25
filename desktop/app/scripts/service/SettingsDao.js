@@ -27,11 +27,13 @@ export class SettingsDao {
     }
 
     async saveSettings(settings) {
-        await this.store.update({serverIp: settings.serverIp}, {$set: {serverIp: settings.serverIp, clientIp: settings.clientIp, port: settings.port}}, {upsert: true});
+        await this.store.update({serverIp: settings.serverIp}, {$set: {clientIp: settings.clientIp, port: settings.port}}, {upsert: true});
     }
 
     async getSettings(serverIp) {
         let settings = await this.store.find({serverIp: serverIp});
+        settings = settings[0];
+        console.log('found settings: ', settings);
         return settings;
     }
 }

@@ -27,17 +27,9 @@ class QrCodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandle
         val contentFrame = findViewById(R.id.content_frame) as ViewGroup
         mScannerView = ZXingScannerView(this)
         contentFrame.addView(mScannerView)
-    }
 
-    public override fun onResume() {
-        super.onResume()
         mScannerView.setResultHandler(this)
         mScannerView.startCamera()
-    }
-
-    public override fun onPause() {
-        super.onPause()
-        mScannerView.stopCamera()
     }
 
     override fun handleResult(result: Result?) {
@@ -51,6 +43,7 @@ class QrCodeScannerActivity : AppCompatActivity(), ZXingScannerView.ResultHandle
         }
 
         val serverDetails = ServerDetails(split[0], split[1], split[2].toInt())
+        mScannerView.stopCamera()
 
         val handler = Handler()
         handler.postDelayed({
