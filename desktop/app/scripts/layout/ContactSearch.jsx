@@ -1,87 +1,67 @@
 import React, { Component } from 'react';
-import Autosuggest from 'react-autosuggest';
-
-// Teach Autosuggest how to calculate suggestions for any given input value.
-const getSuggestions = (contacts, value) => {
-    const inputValue = value.trim().toLowerCase();
-    const inputLength = inputValue.length;
-
-    return inputLength === 0 ? [] : contacts.filter(contact =>
-        contact.displayName.toLowerCase().slice(0, inputLength) === inputValue
-    );
-};
-
-// When suggestion is clicked, Autosuggest needs to populate the input element
-// based on the clicked suggestion. Teach Autosuggest how to calculate the
-// input value for every given suggestion.
-const getSuggestionValue = suggestion => suggestion.displayName;
-
-// Use your imagination to render suggestions.
-const renderSuggestion = suggestion => (
-    <div>
-        {suggestion.displayName}
-    </div>
-);
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
+import FlatButton from 'material-ui/FlatButton';
 
 export class ContactSearch extends Component {
     constructor(props) {
         super(props);
-        this.state = { value: '', suggestions: [], contacts: props.contacts };
-        console.log(props.contacts);
+        this.state = { value: null, contacts: props.contacts, items: []};
     }
 
     componentWillMount() {
-        this.onChange = this.onChange.bind(this);
-        this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
-        this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleNewSms = this.handleNewSms.bind(this);
     }
 
-    onChange = (event, { newValue }) => {
-        this.setState({
-            value: newValue
-        });
-    };
-
-    // Autosuggest will call this function every time you need to update suggestions.
-    // You already implemented this logic above, so just use it.
-    onSuggestionsFetchRequested = ({ value }) => {
-        this.setState({
-            suggestions: getSuggestions(this.state.contacts, value)
-        });
-    };
-
-    // Autosuggest will call this function every time you need to clear suggestions.
-    onSuggestionsClearRequested = () => {
-        this.setState({
-            suggestions: []
-        });
-    };
-
     render() {
-        const { value, suggestions } = this.state;
-
-        // Autosuggest will pass through all these props to the input element.
-        const inputProps = {
-            placeholder: 'Search for a contact',
-            value,
-            onChange: this.onChange
-        };
-
-        // Finally, render it!
         return (
-            <Autosuggest
-                suggestions={suggestions}
-                onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-                onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-                getSuggestionValue={getSuggestionValue}
-                renderSuggestion={renderSuggestion}
-                inputProps={inputProps}
-            />
+            <div style={style.container}>
+                <SelectField
+                    style={style.searchContact}
+                    floatingLabelText="Search for a contact"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    maxHeight={200}
+                >
+                    {this.state.items}
+                </SelectField>
+                
+                <FlatButton onTouchTap={this.handleNewSms} style={style.newButton} label="New" secondary={true} />
+            </div>
         );
     }
 
     componentWillReceiveProps(nextProps) {
-        this.setState({...this.state, contacts: nextProps.contacts});
-        console.log('nextprops: ' ,nextProps.contacts);
+        let  items = [];
+        items.push(<MenuItem value={null} primaryText="" />);
+        for (let i = 0; i < nextProps.contacts.length; i++ ) {
+            items.push(<MenuItem value={i} key={i} primaryText={nextProps.contacts[i].displayName} />);
+        }
+        this.setState({...this.state, contacts: nextProps.contacts, items});
+    }
+
+    handleChange(event, index, value) {
+        this.setState({value});
+    };
+
+    handleNewSms() {
+        let contact = this.state.contacts[this.state.value];
+        this.props.onNewSmsToContact(contact);
     }
 }
+
+
+const style = {
+    searchContact: {
+        width: '80%',
+        marginLeft: '30px'
+    },
+    newButton: {
+        float: 'right'
+    },
+    container: {
+        display: 'flex',
+        alignItems: 'center'
+    }
+};

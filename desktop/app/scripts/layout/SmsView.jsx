@@ -59,6 +59,7 @@ export class SmsView extends Component {
         this.handleSmsListClick = this.handleSmsListClick.bind(this);
         this.onNewSms = this.onNewSms.bind(this);
         this.generateSmsList = this.generateSmsList.bind(this);
+        this.onNewSmsToContact = this.onNewSmsToContact.bind(this);
     }
 
     render() {
@@ -69,7 +70,7 @@ export class SmsView extends Component {
                 </div>
                 <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.menu, ...appStyleSheet.fullheight}}>
-                        <ContactSearch contacts={this.state.contacts}/>
+                        <ContactSearch contacts={this.state.contacts} onNewSmsToContact={this.onNewSmsToContact}/>
                         {
                             !this.state.loading
                             &&
@@ -171,6 +172,11 @@ export class SmsView extends Component {
         conversation.push(sms);
 
         this.setState({...this.state, smsThreads});
+    }
+
+    onNewSmsToContact(contact) {
+        let sms = {message: null, contact, type: 0, date: new Date()}
+        this.onNewSms(sms);
     }
 }
 

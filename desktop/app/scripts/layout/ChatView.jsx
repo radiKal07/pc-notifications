@@ -93,7 +93,9 @@ export class ChatView extends Component {
         let thread = this.getSmsThread(props.smsThread);
         while (index < thread.length) {
             let sms = thread[index++];
-            chatBubbles.push(<ChatBubble key={sms.message + index} message={sms.message} msgType={sms.type}/>);
+            if (sms.message != null) {
+                chatBubbles.push(<ChatBubble key={sms.message + index} message={sms.message} msgType={sms.type}/>);
+            }
         }
         this.setState({...this.state, smsThread: props.smsThread, chatBubbles, showInput: props.showInput});
     }
