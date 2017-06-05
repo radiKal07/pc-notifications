@@ -1,45 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.mxn.soul.flowingdrawer_core.FlowingMenuLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<com.mxn.soul.flowingdrawer_core.FlowingMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/menulayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-<RelativeLayout
-    android:id="@+id/container_menu"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/menu_square"
+        android:id="@+id/container_menu"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:background="@color/colorPrimary">
+        android:layout_height="match_parent">
 
+        <RelativeLayout
+            android:id="@+id/menu_square"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/colorPrimary">
+
+            <TextView
+                android:id="@+id/app_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="PC-Notifications v0.0.1"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/app_name"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="10dp"
+                android:text="Author: Tudor Prodan"
+                android:textColor="#FFFFFF" />
+
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/forget_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/menu_square"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:text="Forget connection" />
     </RelativeLayout>
-
-    <TextView
-        android:layout_below="@id/menu_square"
-        android:id="@+id/home_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="HOME"/>
-
-    <TextView
-        android:id="@+id/settings_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SETTINGS"
-        android:layout_below="@id/home_text_view"/>
-
-    <!-- dev only -->
-    <Button
-        android:id="@+id/forget_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/settings_text_view"
-        android:text="Forget"/>
-</RelativeLayout>
 
 </com.mxn.soul.flowingdrawer_core.FlowingMenuLayout>

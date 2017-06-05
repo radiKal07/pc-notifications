@@ -50,6 +50,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
     private var socket: Socket? = null
     private var errorListener: (() -> Unit)? = null
+    private var successListener: (() -> Unit)? = null
 
     override fun connect(serverDetails: ServerDetails) {
         if (isConnected()) {
@@ -64,6 +65,9 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
             IO.setDefaultHostnameVerifier { hostname, session ->
                 return@setDefaultHostnameVerifier true
             }
+            val opts = IO.Options()
+            opts.forceNew = true
+            opts.reconnection = false
             Log.v(TAG, "Trying to connect to http://$ip:$port ($hostname)")
         } catch (e: ServerDetailsNotFoundException) {
             Log.e(TAG, "Failed to connect", e)
@@ -93,6 +97,9 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
             IO.setDefaultHostnameVerifier { hostname, session ->
                 return@setDefaultHostnameVerifier true
             }
+            val opts = IO.Options()
+            opts.forceNew = true
+            opts.reconnection = false
             Log.v(TAG, "Trying to connect to http://$ip:$port ($hostname)")
         } catch (e: ServerDetailsNotFoundException) {
             Log.e(TAG, "Failed to connect", e)
@@ -151,6 +158,7 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
         socket!!.on(CONNECT) {
             Log.v(TAG, "Connected successfully")
+            successListener?.invoke()
         }
     }
 
@@ -191,5 +199,9 @@ class SocketIOCommunicator @Inject constructor() : DeviceCommunicator {
 
     override fun setErrorListener(errorListener: () -> Unit) {
         this.errorListener = errorListener
+    }
+
+    override fun setSuccessListener(successListener: () -> Unit) {
+        this.successListener = successListener
     }
 }

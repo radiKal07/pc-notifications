@@ -15,4 +15,5 @@ interface DeviceCommunicator {
     fun disconnect()
     fun isConnected(): Boolean
     fun setErrorListener(errorListener: () -> Unit)
+    fun setSuccessListener(errorListener: () -> Unit)
 }

@@ -30,29 +30,18 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/my_toolbar">
 
-            <ProgressBar
-                android:id="@+id/find_server_progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:indeterminate="true"
-                android:visibility="gone" />
-
             <TextView
-                android:id="@+id/find_server_text_view"
+                android:id="@+id/connection_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/find_server_progress_bar"
                 android:layout_centerHorizontal="true"
-                android:text="@string/finding_server"
-                android:visibility="gone" />
+                android:layout_marginTop="30dp"/>
 
-            <TextView
-                android:id="@+id/server_status_text_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:visibility="gone" />
+            <ImageView
+                android:id="@+id/connection_status_image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerInParent="true"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/add_device_fab"

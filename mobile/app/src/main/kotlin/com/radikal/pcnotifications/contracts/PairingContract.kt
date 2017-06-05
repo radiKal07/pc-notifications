@@ -8,11 +8,13 @@ import com.radikal.pcnotifications.model.domain.ServerDetails
 interface PairingContract {
     interface View : BaseView {
         fun showMessage(message: String)
-        fun onServerFound(serverDetails: ServerDetails)
+        fun onServerFound()
         fun onServerFindFailed()
     }
 
     interface Presenter : BasePresenter<PairingContract.View> {
+        fun attachStateListeners()
         fun onServerDetails(serverDetails: ServerDetails)
+        fun isConnected(): Boolean
     }
 }

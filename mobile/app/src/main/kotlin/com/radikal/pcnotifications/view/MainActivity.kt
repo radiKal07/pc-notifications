@@ -1,7 +1,6 @@
 package com.radikal.pcnotifications.view
 
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -14,18 +13,16 @@ import com.radikal.pcnotifications.MainApplication
 import com.radikal.pcnotifications.R
 import com.radikal.pcnotifications.R.id.my_toolbar
 import com.radikal.pcnotifications.contracts.PairingContract
-import com.radikal.pcnotifications.exceptions.ServerDetailsNotFoundException
 import com.radikal.pcnotifications.model.domain.ServerDetails
 import com.radikal.pcnotifications.model.service.ServerDetailsDao
 import com.radikal.pcnotifications.utils.snackbar
+import kotlinx.android.synthetic.main.activity_main.connection_status as connectionStatus
+import kotlinx.android.synthetic.main.activity_main.connection_status_image as connectionStatusImage
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_main.drawerlayout as drawerLayout
 import kotlinx.android.synthetic.main.activity_main.container as container
 import kotlinx.android.synthetic.main.activity_main.my_toolbar as toolbar
 import kotlinx.android.synthetic.main.activity_main.add_device_fab as addDeviceFab
-import kotlinx.android.synthetic.main.activity_main.find_server_progress_bar as findServerProgressBar
-import kotlinx.android.synthetic.main.activity_main.find_server_text_view as findServerTextView
-import kotlinx.android.synthetic.main.activity_main.server_status_text_view as serverStatusTextView
 import kotlinx.android.synthetic.main.menu.forget_button as forgetButton
 
 
@@ -37,8 +34,6 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
 
     @Inject
     lateinit var serverDetailsDao: ServerDetailsDao
-
-    var dialog: DialogInterface? = null
 
     companion object {
         val HOSTNAME_TAG: String = "hostname"
@@ -69,13 +64,7 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
         addDeviceFab.setOnClickListener {
             val intent = Intent(applicationContext, QrCodeScannerActivity::class.java)
             startActivity(intent)
-        }
-
-        try {
-            showServerStatus()
             addDeviceFab.visibility = View.GONE
-        } catch (e: ServerDetailsNotFoundException) {
-            addDeviceFab.visibility = View.VISIBLE
         }
 
         pairingPresenter.setView(this)
@@ -93,12 +82,14 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
             pairingPresenter.onServerDetails(ServerDetails(hostname, ip, port))
             Log.d(TAG, "ip and port: $ip:$port ($hostname)")
         }
-    }
 
-    private fun showServerStatus() {
-        val retrieve = serverDetailsDao.retrieve()
-        serverStatusTextView.text = "Connected to: ${retrieve.hostname} (${retrieve.ip}:${retrieve.port})"
-        serverStatusTextView.visibility = View.VISIBLE
+        if (pairingPresenter.isConnected()) {
+            onServerFound()
+        } else {
+            onServerFindFailed()
+        }
+
+        pairingPresenter.attachStateListeners()
     }
 
     override fun showMessage(message: String) {
@@ -107,21 +98,20 @@ class MainActivity : AppCompatActivity(), PairingContract.View {
         }
     }
 
-    override fun onServerFound(serverDetails: ServerDetails) {
-        runOnUiThread { hideServerSearch() }
+    override fun onServerFound() {
+        runOnUiThread {
+            connectionStatus.text = getString(R.string.connection_up)
+            connectionStatusImage.setImageDrawable(getDrawable(R.drawable.ic_sentiment_very_satisfied_black_48dp))
+            addDeviceFab.visibility = View.GONE
+        }
     }
 
     override fun onServerFindFailed() {
         runOnUiThread {
-            hideServerSearch()
             addDeviceFab.visibility = View.VISIBLE
+            connectionStatus.text = getString(R.string.connection_down)
+            connectionStatusImage.setImageDrawable(getDrawable(R.drawable.ic_sentiment_dissatisfied_black_48dp))
         }
-    }
-
-    fun hideServerSearch() {
-        dialog?.cancel()
-        findServerProgressBar.visibility = View.GONE
-        findServerTextView.visibility = View.GONE
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
