@@ -15,7 +15,7 @@ export class SettingsView extends Component {
                 </div>
                 <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.fullContent, ...appStyleSheet.fullheight}}>
-                        <p style={appStyleSheet.centerMsg}>Settings view</p>
+                        <p style={appStyleSheet.centerMsg}>PC-Notifications v0.0.1</p>
                     </div>
                 </div>
             </div>

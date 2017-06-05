@@ -39,10 +39,7 @@ export class PairingView extends Component {
 
         return(
             <div>
-                <div style={{...appStyleSheet.staticFixed, ...appStyleSheet.fullheight}}>
-                    sidebar
-                </div>
-                <div style={{...appStyleSheet.dinamic, ...appStyleSheet.fullheight}}>
+                <div style={{...appStyleSheet.fullheight}}>
                     <div style={{...appStyleSheet.fullContent, ...appStyleSheet.fullheight}}>
                         <p style={appStyleSheet.centerMsg}>Please pair device</p>
                         <CustomActionButton style={appStyleSheet.actionBtn} onTouchTap={this.handlePairDevice}/>
